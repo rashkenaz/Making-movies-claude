@@ -1,5 +1,5 @@
 // Build the single self-contained index.html: CSS + JS + fonts (base64) + icons + beat grid inlined.
-//   node dialog-trainings/build.mjs   (from the project folder)
+//   node social-skills-reel/build.mjs   (from the project folder)
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,7 +11,7 @@ let css = rd('src/film.css')
   .replace('@@FONT_RUBIK_HE@@', b64('fonts/rubik-hebrew.woff2', 'font/woff2'))
   .replace('@@FONT_RUBIK_LA@@', b64('fonts/rubik-latin.woff2', 'font/woff2'))
 ;
-const js = rd('src/film.js');
+const js = rd('src/film.js').replace('@@SIGAL@@', b64('assets/sigal.jpg', 'image/jpeg'));
 const beats = JSON.parse(rd('beats.json'));
 const grid = { period: beats.period, offset: beats.offset, bpm: beats.bpm };
 const ICON_DIR = path.join(ROOT, 'node_modules/lucide-static/icons');
@@ -26,7 +26,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>מרכז דיאלוג · הדרכות מקצועיות</title>
+<title>מרכז דיאלוג · קבוצת חברים</title>
 <style>${css}</style>
 </head>
 <body>
