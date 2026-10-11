@@ -1,0 +1,23 @@
+/* Merkaz Dialog "קבוצת חברים" reel (9:16). Every animated property is set from seek(t); no transitions here. */
+@font-face { font-family: 'Rubik'; src: url(@@FONT_RUBIK_HE@@) format('woff2'); font-weight: 300 900; font-style: normal;
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F; }
+@font-face { font-family: 'Rubik'; src: url(@@FONT_RUBIK_LA@@) format('woff2'); font-weight: 300 900; font-style: normal;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
+:root { --ink: #4E4B5D; --coral-d: #DE7458; --paper: #FCF6EC; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #E9E5DF; }
+body { font-family: 'Rubik', sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+#stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); transform-origin: 0 0; }
+#scene, #leaders, #ui, #grain { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+#scene g { transform-box: view-box; }
+#ui { pointer-events: none; }
+.tl { position: absolute; left: 50px; right: 50px; text-align: center; white-space: nowrap; text-shadow: 0 0 14px var(--paper), 0 0 6px var(--paper); }
+.wd { display: inline-block; }
+.mask { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 6px 20px; margin-bottom: -20px; }
+.cap1 { font-size: 96px; font-weight: 800; color: var(--ink); letter-spacing: -1px; line-height: 1.15; }
+.cap2 { font-size: 70px; font-weight: 700; color: var(--coral-d); line-height: 1.2; }
+.lab { position: absolute; left: 0; top: 0; padding: 10px 28px 14px; border-radius: 40px; background: var(--paper); border: 3px solid var(--ink); font-size: 46px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+#grain { pointer-events: none; opacity: .09; mix-blend-mode: multiply; background-size: 256px 256px; }
+#harness { position: fixed; left: 0; right: 0; bottom: 0; height: 54px; background: #222; display: flex; align-items: center; gap: 12px; padding: 0 14px; color: #fff; font: 14px monospace; direction: ltr; }
+#harness input { flex: 1; }
