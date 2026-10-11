@@ -179,7 +179,8 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     const s = P.s, w = LW / s;
     const legs = P.legs || [[4, 0], [-4, 0]], arms = P.arms || [[-12, 8], [12, -8]];
     const sq = P.sq || 0, lift = P.lift || 0;
-    const L1 = chain(-HIP, -100, legs[0][0], 50, legs[0][1], 48), L2 = chain(HIP, -100, legs[1][0], 50, legs[1][1], 48);
+    let L1 = chain(-HIP, -100, legs[0][0], 50, legs[0][1], 48), L2 = chain(HIP, -100, legs[1][0], 50, legs[1][1], 48);
+    if (P.sit) { L1 = [[-HIP, -100], [-HIP - 3, -80], [-HIP - 4, -44]]; L2 = [[HIP, -100], [HIP + 3, -80], [HIP + 4, -44]]; }
     const A1 = chain(-SHOULDER, -176, arms[0][0], 40, arms[0][1], 38), A2 = chain(SHOULDER, -176, arms[1][0], 40, arms[1][1], 38);
     const leg = (pts) => {
       const ft = pts[2];
@@ -221,12 +222,13 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     const hy = -232;
     const shadowW = 50 * (1 - clamp(lift / 220)) ;
     const body = `
-      <g transform="rotate(${f2(P.lean || 0)}) scale(${f3(1 + sq * 0.6)},${f3(1 - sq)}) translate(0,${f1(-lift)})">
+      <g transform="rotate(${f2(P.lean || 0)}) scale(${f3(1 + sq * 0.6)},${f3(1 - sq)}) translate(0,${f1(-lift + (P.sit ? 46 : 0))})">
         <g transform="translate(0,${hy}) rotate(${f2(tilt)})">${headBack}</g>
-        ${bag}${leg(L1)}${leg(L2)}${skirt}
+        ${bag}${leg(L1)}${leg(L2)}${P.sit ? '' : skirt}
         <path d="${torsoD}" fill="${vol(o.shirt)}"/>${stripes}
         <path d="${torsoD}" fill="none" stroke="${L}" stroke-width="${f2(w)}" stroke-linejoin="round"/>
         <path d="M-11,-192 Q0,-181 11,-192" fill="none" stroke="${L}" stroke-width="${f2(w * 0.7)}" stroke-linecap="round"/>
+        ${P.sit ? `<path d="M-34,-104 Q-36,-80 -24,-76 L24,-76 Q36,-80 34,-104 Z" fill="${vol(o.low === 'skirt' ? o.pants : o.low === 'pants' ? o.pants : o.pants)}" stroke="${L}" stroke-width="${f2(w)}" stroke-linejoin="round"/>` : ''}
         ${straps}${arm(A1)}${arm(A2)}
         <g transform="translate(0,${hy}) rotate(${f2(tilt)})">${head}</g>
         ${P.extra || ''}
@@ -331,6 +333,61 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     </g>
     <rect x="788" y="1136" width="344" height="30" rx="12" fill="${C.grey.m}" ${ol()}/>
   `;
+
+
+  // ------------------------------------------------------------------ the group room (its own coordinates, seen through the round window)
+  const ROOM_BG = `
+    <rect x="-600" y="-200" width="2280" height="1360" fill="${C.blue.l}"/>
+    <rect x="-600" y="1150" width="2280" height="1200" fill="${C.yellow.l}"/>
+    ${[1190, 1240, 1300, 1370, 1450, 1540, 1640].map((y) => `<path d="M-600,${y} L1680,${y}" stroke="${C.yellow.d}" stroke-width="3" opacity=".35" fill="none"/>`).join('')}
+    <path d="M-600,1150 L1680,1150" ${ol()} fill="none"/>
+    <rect x="-600" y="1132" width="2280" height="18" fill="${C.blue.m}" opacity=".55"/>
+    <!-- window with the sky outside -->
+    <rect x="690" y="800" width="230" height="230" rx="26" fill="#fff" ${ol()}/>
+    <rect x="708" y="818" width="194" height="194" rx="16" fill="#D4ECFA" ${ol(3)}/>
+    <circle cx="860" cy="860" r="26" fill="${C.yellow.m}" ${ol(3)}/>
+    <path d="M805,818 L805,1012 M708,915 L902,915" stroke="#fff" stroke-width="10"/>
+    <!-- a drawing board -->
+    <rect x="150" y="830" width="230" height="170" rx="18" fill="#fff" ${ol()}/>
+    <circle cx="215" cy="900" r="26" fill="${C.yellow.m}" ${ol(3)}/><path d="M205,895 L205,897 M225,895 L225,897 M203,910 Q215,920 227,910" ${ol(3)} fill="none"/>
+    <circle cx="300" cy="900" r="26" fill="${C.blue.m}" ${ol(3)}/><path d="M290,895 L290,897 M310,895 L310,897 M288,910 Q300,920 312,910" ${ol(3)} fill="none"/>
+    <path d="M241,960 Q258,940 274,960" stroke="${C.coral.d}" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M240,1000 L230,1070 M290,1000 L300,1070" ${ol()} fill="none"/>
+    <!-- bunting -->
+    <path d="M-40,760 Q540,840 1120,760" ${ol(3)} fill="none"/>
+    ${Array.from({ length: 13 }, (_, i) => { const x = -10 + i * 90, y = 762 + Math.sin(((x + 40) / 1160) * Math.PI) * 42; return `<path d="M${x - 22},${y.toFixed(0)} L${x + 22},${y.toFixed(0)} L${x},${(y + 40).toFixed(0)} Z" fill="${[C.coral.m, C.blue.m, C.yellow.m, C.green.m, C.grey.m][i % 5]}" ${ol(3)}/>`; }).join('')}
+    <!-- shelves with toys -->
+    <rect x="980" y="900" width="200" height="16" rx="6" fill="${C.coral.d}" ${ol(3)}/>
+    <rect x="995" y="852" width="44" height="48" rx="8" fill="${C.blue.m}" ${ol(3)}/><circle cx="1075" cy="876" r="24" fill="${C.yellow.m}" ${ol(3)}/>
+    <rect x="-100" y="1000" width="200" height="16" rx="6" fill="${C.coral.d}" ${ol(3)}/>
+    <rect x="-60" y="950" width="50" height="50" rx="8" fill="${C.green.m}" ${ol(3)}/><rect x="0" y="962" width="40" height="38" rx="8" fill="${C.coral.m}" ${ol(3)}/>
+    <!-- game cards and a ball in the middle of the circle -->
+    <g transform="translate(560,1238)">
+      <ellipse cx="0" cy="8" rx="120" ry="16" fill="${L}" opacity=".06"/>
+      <rect x="-80" y="-14" width="44" height="30" rx="6" fill="#fff" ${ol(3)} transform="rotate(-12 -58 1)"/><circle cx="-58" cy="1" r="7" fill="${C.coral.m}"/>
+      <rect x="-28" y="-10" width="44" height="30" rx="6" fill="#fff" ${ol(3)} transform="rotate(8 -6 5)"/><path d="M-12,6 L0,-2 L10,8" stroke="${C.blue.d}" stroke-width="4" fill="none"/>
+      <rect x="22" y="-12" width="44" height="30" rx="6" fill="#fff" ${ol(3)} transform="rotate(-4 44 3)"/><circle cx="44" cy="3" r="7" fill="${C.green.d}"/>
+      <circle cx="94" cy="-6" r="20" fill="${vol(C.yellow.m)}" ${ol()}/><path d="M76,-10 Q94,-20 112,-10" stroke="#fff" stroke-width="4" fill="none"/>
+    </g>
+    <!-- plant -->
+    <path d="M1010,1150 L1000,1060 L1080,1060 L1070,1150 Z" fill="${C.coral.m}" ${ol()}/>
+    ${blob([[1020, 1020, 26], [1060, 1010, 28], [1040, 985, 26]], C.green.m)}
+  `;
+  const RC = { x: 560, y: 1235, rx: 255, ry: 92 };
+  const SEATS = [[-90, 'fac', C.blue.m], [-140, 'a', C.yellow.m], [-40, 'g', C.coral.m], [-170, 'c', C.green.m], [-10, 'b', C.grey.m], [160, 'e', C.blue.m], [20, 'hero', C.coral.m]]
+    .map(([ang, k, c]) => ({ ang, k, c, x: RC.x + RC.rx * Math.cos(ang * RAD), y: RC.y + RC.ry * Math.sin(ang * RAD) }));
+  const FREE = SEATS.find((q) => q.k === 'hero');
+  const rDepth = (y) => 0.95 + ((y - 1140) / 200) * 0.2;
+  const FAC = { skin: '#E6B48E', hair: 'long', hc: '#2B2220', shirt: '#7FC4C0', low: 'pants', pants: C.grey.d, shoe: C.coral.d };
+  function chairSVG(x, y, s, c) {
+    const w = LW / s;
+    return `<g transform="translate(${f1(x)},${f1(y)}) scale(${f3(s)})">
+      <ellipse cx="0" cy="4" rx="54" ry="9" fill="${L}" opacity=".12"/>
+      <path d="M-34,-56 L-38,0 M34,-56 L38,0 M-22,-50 L-24,-4 M22,-50 L24,-4" stroke="${L}" stroke-width="${f2(w * 2.2)}" stroke-linecap="round"/>
+      <path d="M-34,-56 L-38,0 M34,-56 L38,0" stroke="${shade(c, -0.2)}" stroke-width="${f2(w * 1.2)}" stroke-linecap="round"/>
+      <rect x="-42" y="-172" width="84" height="104" rx="26" fill="${vol(c)}" stroke="${L}" stroke-width="${f2(w)}"/>
+      <rect x="-48" y="-72" width="96" height="22" rx="11" fill="${vol(shade(c, -0.08))}" stroke="${L}" stroke-width="${f2(w)}"/></g>`;
+  }
 
   // ------------------------------------------------------------------ choreography (seconds)
   const DOOR = [540, 1100];
@@ -578,6 +635,77 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     return P;
   }
 
+
+  // the room: the group already sits in a circle; the boy walks in, sits on the free chair, everyone waves
+  const ENTER = 8.95, ARRIVE = 10.05, SIT = 10.25, WAVE = 10.45;
+  function roomScene(t) {
+    const items = [];
+    for (const st of SEATS) {
+      const s = rDepth(st.y);
+      items.push([st.y - 0.5, chairSVG(st.x, st.y, s, st.c)]);
+      if (st.k === 'hero') continue;
+      const o = st.k === 'fac' ? FAC : KIDS[st.k];
+      const sd = hash(st.ang + 7) * 6;
+      const P = { x: st.x, y: st.y + 2, s: s * (st.k === 'fac' ? 1.1 : 1), sit: true, mouth: 'smile', blink: blinkAt(t, sd) };
+      P.arms = [[-14, 70], [14, -70]];                               // hands on the lap
+      P.sq = 0.012 * Math.sin(t * TAU * 0.45 + sd);
+      P.tilt = 3 * Math.sin(t * 1.1 + sd);
+      // everyone turns to the boy as he comes in (eyes lead, then the head: overlapping action)
+      const watch = EZ.io(prog(t, ENTER + 0.2 + hash(sd) * 0.3, ENTER + 0.7 + hash(sd) * 0.3));
+      const look = lookToward(P, FREE.x + 80, FREE.y - 240);
+      P.look = mix([0, 0], look, watch);
+      P.tilt += watch * clamp((FREE.x - st.x) / 60, -6, 6);
+      P.brow = 3 * watch;
+      // the welcome: staggered waves with a bounce on the seat, big smiles
+      const w0 = WAVE + hash(sd + 1) * 0.35;
+      if (t > w0) {
+        const wt = t - w0, env = Math.min(1, wt / 0.25) * (1 - prog(t, 13.2, 13.8));
+        const wv = Math.sin(wt * TAU * 1.6);
+        P.arms = mix(P.arms, [[-14, 70], [150 + 18 * wv, -26 - 18 * wv]], env);
+        if (st.k === 'fac') P.arms = mix([[-14, 70], [14, -70]], POSE.open, env * 0.8);
+        P.lift = Math.max(0, Math.sin(wt * TAU * 1.2)) * 8 * env * Math.exp(-wt * 0.5);
+        P.mouth = env > 0.3 ? 'grin' : 'smile';
+        P.hairSw = -P.lift;
+      }
+      items.push([st.y, kid('r_' + st.k, o, P)]);
+    }
+    // the boy: walk in on a gentle arc, a little turn (anticipation), sit down with a squash, settle
+    if (t > ENTER - 0.1) {
+      const s = rDepth(FREE.y);
+      const u = EZ.run(prog(t, ENTER, ARRIVE));
+      const x0 = 1060, y0 = 1420, x1 = FREE.x + 6, y1 = FREE.y + 26;
+      const cx = 960, cy = 1290;
+      const x = (1 - u) ** 2 * x0 + 2 * (1 - u) * u * cx + u * u * x1, y = (1 - u) ** 2 * y0 + 2 * (1 - u) * u * cy + u * u * y1;
+      const P = { x, y, s: rDepth(y), blink: blinkAt(t, 0.31), mouth: 'smile', brow: 3 };
+      if (t < ARRIVE) {
+        Object.assign(P, runPose(u * 360, 0.45 + 0.4 * Math.sin(Math.PI * prog(t, ENTER, ARRIVE))));
+        P.flip = true; P.lean = 4; P.look = [-3, 0];
+        P.arms = POSE.straps.map((a, i) => [a[0] + (i ? 6 : -6) * Math.sin(u * 20), a[1]]);
+      } else {
+        const sitE = EZ.in(prog(t, SIT, SIT + 0.2));
+        P.x = lerp(x1, FREE.x, sitE); P.y = lerp(y1, FREE.y + 2, sitE);
+        P.s = rDepth(P.y);
+        P.arms = t < SIT + 0.1 ? POSE.straps : mix(POSE.straps, [[-14, 70], [14, -70]], EZ.io(prog(t, SIT + 0.1, SIT + 0.5)));
+        if (t < SIT) {
+          P.sq = kf(t, [[ARRIVE, 0], [SIT, 0.1, EZ.anti]]);
+          P.lean = wob(t, ARRIVE, -5, 2.4, 4);
+          P.look = [-3, 0];
+        } else {
+          P.sit = true;
+          P.lift = 46 * (1 - sitE);
+          P.sq = 0.18 * bump(t, SIT + 0.22, 0.07) + wob(t, SIT + 0.25, 0.05, 3, 6) + 0.012 * Math.sin(t * TAU * 0.45);
+          P.look = t < WAVE + 0.2 ? [-3, 0] : [-2.5 * Math.sin(t * 1.3), -0.5];
+          P.mouth = t > WAVE + 0.1 ? 'grin' : 'smile';
+          P.tilt = wob(t, SIT + 0.2, 6, 2, 3) + 3 * Math.sin(t * 1.1);
+          P.brow = 4;
+        }
+      }
+      items.push([P.y + 0.6, kid('r_hero', KIDS.hero, P)]);
+    }
+    items.sort((p, q) => p[0] - q[0]);
+    return items.map((i) => i[1]).join('');
+  }
+
   // ------------------------------------------------------------------ the ball (ballistic arcs, squash on contact)
   function ball(t, pose) {
     const a = pose.a, g = pose.g;
@@ -616,12 +744,21 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
         <g id="ballG"><g id="ballIn"><circle r="21" fill="${vol(C.coral.m)}" ${ol()}/><path d="M-20,-4 Q0,-15 20,-4 M-6,-20 Q6,0 -4,20" fill="none" stroke="#fff" stroke-width="4"/></g></g>
       </g>
     </svg>
+    <svg id="roomLayer" width="${SW}" height="${SH}" viewBox="0 0 ${SW} ${SH}" style="position:absolute;left:0;top:0">
+      <defs><clipPath id="winClip"><circle id="winClipC" cx="0" cy="0" r="0"/></clipPath></defs>
+      <g clip-path="url(#winClip)"><rect width="${SW}" height="${SH}" fill="${C.blue.l}"/><g id="room">${ROOM_BG}<g id="roomKids"></g></g></g>
+      <g id="ring"></g>
+    </svg>
     <svg id="leaders" width="${SW}" height="${SH}" viewBox="0 0 ${SW} ${SH}"></svg>
     <div id="ui">
       <div class="tl cap1" id="c1" style="top:262px">${mw('הצלצול להפסקה.')}</div>
       <div class="tl cap2" id="c2" style="top:384px">${mw('הרגע הכי ארוך ביום שלו.')}</div>
       <div class="lab" id="lab1">הפסקה</div>
       <div class="lab" id="lab2">צעד קטן</div>
+      <div class="lab" id="lab3">יש לו מקום</div>
+      <div id="plate" style="position:absolute;left:70px;right:70px;top:272px;height:268px;border-radius:44px;background:var(--paper);border:3px solid var(--ink)"></div>
+      <div class="tl cap1 end" id="r1" style="top:300px">${mw('חברות היא מיומנות.')}</div>
+      <div class="tl cap1 end" id="r2" style="top:420px;color:${C.coral.d}">${mw('אפשר לתרגל אותה.')}</div>
     </div>
     <div id="grain"></div>`;
   const $ = (id) => document.getElementById(id);
@@ -632,7 +769,7 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
   // ------------------------------------------------------------------ camera (keyframed, slow in / slow out)
   function camera(t) {
     // [scale, focus x, focus y]: the focus point lands at screen (540, 1000).
-    const k = kf(t, [[0, [1.0, 540, 1000]], [4.4, [1.035, 545, 1005], EZ.io], [6.3, [1.5, 860, 1170], EZ.io], [7.6, [1.56, 835, 1150], EZ.io]]);
+    const k = kf(t, [[0, [1.0, 540, 1000]], [4.4, [1.035, 545, 1005], EZ.io], [6.3, [1.5, 860, 1170], EZ.io], [7.75, [1.62, 820, 1140], EZ.io], [8.8, [4.0, WIN[0], WIN[1]], cb(0.55, 0, 0.25, 1)], [11.4, [4.0, WIN[0], WIN[1]]], [12.9, [3.25, WIN[0], WIN[1] - 24], EZ.io], [14.2, [3.2, WIN[0], WIN[1] - 25], EZ.io]]);
     return { s: k[0], fx: k[1], fy: k[2], dy: 0 };
   }
   const toScreen = (cam, x, y) => [540 + (x - cam.fx) * cam.s, 1000 + (y - cam.fy) * cam.s + cam.dy];
@@ -700,6 +837,8 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     out.push(['hero', heroP]);
     const B = preBall;
     out.sort((p, q) => p[1].y - q[1].y);
+    const yardFade = f2(1 - prog(cam.s, 2.0, 2.9));
+    kidsG.style.opacity = yardFade; ballG.style.opacity = yardFade;
     kidsG.innerHTML = out.map(([k, P]) => (P.back ? `<g transform="translate(${f1(P.x)},${f1(P.y)}) scale(${f3((P.flip ? -1 : 1) * P.s)},${f3(P.s)})"><g transform="scale(${f3(1 + (P.sq || 0) * 0.6)},${f3(1 - (P.sq || 0))}) translate(0,${f1(-(P.lift || 0))})">${P.back}</g></g>` : '') + kid(k, KIDS[k], P)).join('');
     ballG.style.display = B ? '' : 'none';
     if (B) {
@@ -722,12 +861,47 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     }
     dustG.innerHTML = puffs.join('');
 
+    // the round cutaway: opens from the point the boy looks at (overshoot), the camera goes in, it stays open as a frame
+    const RW = 120;
+    const openK = t < 7.55 ? 0 : clamp(sp(t, 7.55, { stiffness: 210, damping: 13 }), 0, 1.2);
+    const rS = RW * cam.s * openK;
+    const [wcx, wcy] = toScreen(cam, WIN[0], WIN[1]);
+    const roomOn = rS > 1;
+    $('roomLayer').style.display = roomOn ? '' : 'none';
+    let roomV = null;
+    if (roomOn) {
+      $('winClipC').setAttribute('cx', f1(wcx)); $('winClipC').setAttribute('cy', f1(wcy)); $('winClipC').setAttribute('r', f1(rS));
+      const rv = kf(t, [[0, [520, 560, 1110]], [8.8, [330, 575, 1120], EZ.io], [9.6, [320, 600, 1125], EZ.io], [11.4, [318, 605, 1128]], [12.9, [345, 560, 1118], EZ.io]]);
+      const rs = rS / rv[0];
+      roomV = { s: rs, fx: rv[1], fy: rv[2], cx: wcx, cy: wcy };
+      $('room').setAttribute('transform', `translate(${f2(wcx - rv[1] * rs)},${f2(wcy - rv[2] * rs)}) scale(${f3(rs)})`);
+      $('roomKids').innerHTML = roomScene(t);
+      const sparks = [];
+      for (let i = 0; i < 10; i++) {
+        const a = (i / 10) * TAU + 0.3, d = t - 7.62 - (i % 3) * 0.05;
+        if (d < 0 || d > 0.6) continue;
+        const r = rS + 20 + EZ.out(d / 0.6) * 70;
+        sparks.push(`<circle cx="${f1(wcx + Math.cos(a) * r)}" cy="${f1(wcy + Math.sin(a) * r)}" r="${f1(9 * (1 - d / 0.6) + 2)}" fill="${[C.yellow.m, C.coral.m, C.blue.m][i % 3]}" stroke="${L}" stroke-width="3" opacity="${f2(1 - d / 0.6)}"/>`);
+      }
+      $('ring').innerHTML = `<circle cx="${f1(wcx)}" cy="${f1(wcy)}" r="${f1(rS + 12)}" fill="none" stroke="${L}" stroke-width="${LW}"/>
+        <circle cx="${f1(wcx)}" cy="${f1(wcy)}" r="${f1(rS + 6)}" fill="none" stroke="${C.yellow.m}" stroke-width="12"/>
+        <circle cx="${f1(wcx)}" cy="${f1(wcy)}" r="${f1(rS)}" fill="none" stroke="${L}" stroke-width="${LW}"/>${sparks.join('')}`;
+    }
+    const pk = sp(t, 11.6, SPR.ui);
+    $('plate').style.opacity = f2(clamp(pk * 1.5));
+    $('plate').style.transform = `translateY(${f1((1 - pk) * 30)}px) scale(${f3(0.92 + 0.08 * pk)})`;
+    words($('r1'), t, 11.75, 0.16);
+    words($('r2'), t, 12.75, 0.16);
+
     // captions (the hook), then they clear the frame for the push-in
     words($('c1'), t, 0.6);
     words($('c2'), t, 1.9);
-    $('ui').querySelectorAll('.tl').forEach((n) => { n.style.opacity = f2(1 - EZ.io(prog(t, 4.9, 5.4))); });
+    $('ui').querySelectorAll('.tl:not(.end)').forEach((n) => { n.style.opacity = f2(1 - EZ.io(prog(t, 4.9, 5.4))); });
 
-    leaders.innerHTML = label('lab1', t, 2.6, 4.45, [610, 1310], [96, 520], cam) + label('lab2', t, STEP + 0.05, 7.55, [HERO[0] + STEP_DX - 10, HERO[1] + 4], [650, 1290], cam);
+    const IDCAM = { s: 1, fx: 540, fy: 1000, dy: 0 };
+    const chairScr = roomV ? [roomV.cx + (FREE.x - roomV.fx) * roomV.s, roomV.cy + (FREE.y - 150 * rDepth(FREE.y) - roomV.fy) * roomV.s] : [0, 0];
+    leaders.innerHTML = label('lab1', t, 2.6, 4.45, [610, 1310], [96, 520], cam) + label('lab2', t, STEP + 0.05, 7.55, [HERO[0] + STEP_DX - 10, HERO[1] + 4], [650, 1290], cam)
+      + label('lab3', t, 9.15, 11.45, chairScr, [700, 360], IDCAM);
   }
 
   // ------------------------------------------------------------------ sound on picture
@@ -745,6 +919,13 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     add(2.6, 'label', 'blip', { pitch: 'E6', gain: 0.05 });
     add(STEP_END, 'small step', 'tok', { pitch: 'D5', gain: 0.14 });
     add(6.9, 'looks up', 'blip', { pitch: 'B5', gain: 0.07 });
+    add(7.55, 'window opens', 'pop', { pitch: 'D6', gain: 0.16 });
+    add(7.9, 'into the window', 'whoosh', { len: 0.8, from: 300, to: 2000, gain: 0.12 });
+    add(9.15, 'label chair', 'blip', { pitch: 'A5', gain: 0.06 });
+    add(SIT + 0.22, 'he sits', 'pop', { pitch: 'A5', gain: 0.2 });
+    [0, 0.15, 0.3].forEach((d, i) => add(WAVE + d, `wave ${i + 1}`, 'blip', { pitch: ['D6', 'F#6', 'A6'][i], gain: 0.06 }));
+    add(11.75, 'end line 1', 'blip', { pitch: 'A5', gain: 0.08 });
+    add(12.75, 'end line 2', 'bell', { pitch: 'D6', gain: 0.14 });
     return H.sort((a, b) => a[0] - b[0]);
   }
 
