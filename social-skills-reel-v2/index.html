@@ -32,7 +32,7 @@ body { font-family: 'Rubik', sans-serif; color: var(--ink); -webkit-font-smoothi
 <body>
 <div id="stage"></div>
 <script>
-const GRID = {"period":0.62499,"offset":0.0025,"bpm":96.002};
+const GRID = {"period":0.624994,"offset":0.00124,"bpm":96.001};
 const ICONS = {"play":"<path d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\" />","smile":"<path d=\"M15 10V9\" /> <path d=\"M16.472 15a6 6 0 01-8.943 0\" /> <path d=\"M9 10V9\" /> <circle cx=\"12\" cy=\"12\" r=\"10\" />","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\" /> <path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\" />","waves":"<path d=\"M2 12q2.5 2 5 0t5 0 5 0 5 0\" /> <path d=\"M2 19q2.5 2 5 0t5 0 5 0 5 0\" /> <path d=\"M2 5q2.5 2 5 0t5 0 5 0 5 0\" />"};
 const EMO = {"wave": "<svg class=\"emo\" viewBox=\"0 -950 1275 1200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><defs><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M912,-388 Q888,-414 862.5,-458 Q837,-502 812,-554 Q787,-606 763.5,-657.5 Q740,-709 719.5,-752.5 Q699,-796 684,-822 Q671,-845 652,-850 Q633,-855 615.5,-846.5 Q598,-838 588.5,-821 Q579,-804 585,-784 Q587,-776 596.5,-749 Q606,-722 619.5,-684 Q633,-646 648,-605.5 Q663,-565 676,-528.5 Q689,-492 698,-468 Q707,-444 709,-441 Q714,-428 704.5,-423 Q695,-418 689,-430 Q687,-432 673,-455.5 Q659,-479 637,-515 Q615,-551 590,-592.5 Q565,-634 541,-673 Q517,-712 498.5,-741.5 Q480,-771 473,-783 Q458,-805 437.5,-808 Q417,-811 399,-801 Q381,-791 373,-772 Q365,-753 374,-732 Q381,-715 398,-683.5 Q415,-652 437,-612 Q459,-572 482,-531 Q505,-490 525,-455 Q545,-420 558,-397 Q571,-374 573,-371 Q577,-361 568.5,-354 Q560,-347 553,-355 Q551,-357 534.5,-376 Q518,-395 493.5,-423.5 Q469,-452 441,-484.5 Q413,-517 386.5,-547.5 Q360,-578 341,-599.5 Q322,-621 315,-628 Q300,-644 282.5,-644 Q265,-644 250.5,-633 Q236,-622 231,-605 Q226,-588 236,-569 Q250,-545 286,-497.5 Q322,-450 371.5,-387 Q421,-324 474,-253 Q481,-245 473,-237 Q465,-229 455,-238 Q453,-239 434,-255.5 Q415,-272 387,-295 Q359,-318 331,-341.5 Q303,-365 281.5,-382.5 Q260,-400 254,-404 Q238,-416 221.5,-412.5 Q205,-409 193.5,-396 Q182,-383 180,-366 Q178,-349 191,-332 Q201,-320 221.5,-296.5 Q242,-273 266,-247 Q290,-221 310,-199 Q330,-177 339,-168 Q385,-121 411.5,-88.5 Q438,-56 457.5,-30 Q477,-4 499,22 Q521,48 558,81 Q614,133 670,153 Q726,173 777.5,169.5 Q829,166 874,145 Q919,124 955,93 Q991,62 1015,29 Q1039,-5 1051,-45 Q1063,-85 1067,-126 Q1071,-167 1070,-202 Q1069,-237 1066.5,-260.5 Q1064,-284 1064,-289 Q1062,-331 1069,-372.5 Q1076,-414 1085.5,-452 Q1095,-490 1102,-520 Q1109,-550 1106,-568 Q1103,-589 1083,-603 Q1063,-617 1039,-610 Q1001,-598 978.5,-570 Q956,-542 943.5,-507 Q931,-472 926,-440 Q921,-408 919,-389 Q919,-387 916.5,-386 Q914,-385 912,-388 Z\" id=\"wave_u1F44B.0\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M893,-386 Q834,-338 801,-279 Q768,-220 770.5,-153 Q773,-86 820,-15 Q827,-6 836,-12 Q845,-18 839,-28 Q824,-55 814,-91 Q804,-127 807,-170 Q810,-213 833,-260.5 Q856,-308 907,-358 Q919,-352 930,-360.5 Q941,-369 942,-380 Q947,-424 954.5,-462.5 Q962,-501 979,-531.5 Q996,-562 1028,-583 Q1047,-594 1067,-586 Q1087,-578 1088,-549 Q1088,-549 1094,-548.5 Q1100,-548 1106,-547 Q1107,-559 1106,-568 Q1103,-589 1083,-603 Q1063,-617 1039,-610 Q1001,-598 978.5,-570 Q956,-542 943.5,-507 Q931,-472 926,-440 Q921,-408 919,-389 Q919,-387 916.5,-386 Q914,-385 912,-388 Q905,-396 897,-407 Z\" id=\"wave_u1F44B.1\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M475,-238 L475,-239 Q472,-235 466,-234 Q460,-233 455,-238 Q453,-239 434,-255.5 Q415,-272 387,-295 Q359,-318 331,-341.5 Q303,-365 281.5,-382.5 Q260,-400 254,-404 Q239,-415 222.5,-412 Q206,-409 195,-398 Q210,-404 224,-398.5 Q238,-393 245,-388 Q248,-385 266,-369.5 Q284,-354 310,-332.5 Q336,-311 362,-289 Q388,-267 407.5,-251 Q427,-235 432,-231 Q446,-221 456,-225 Q466,-229 475,-238 Z\" id=\"wave_u1F44B.10\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M137,-188 Q133,-199 121.5,-197.5 Q110,-196 113,-184 Q121,-125 146.5,-84 Q172,-43 205.5,-17 Q239,9 273,22 Q284,27 288,17.5 Q292,8 282,1 Q228,-36 193.5,-79.5 Q159,-123 137,-188 Z\" id=\"wave_u1F44B.11\" fill=\"#B0BEC5\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M193,-239 Q190,-251 178.5,-249.5 Q167,-248 169,-236 Q178,-176 203,-135 Q228,-94 261.5,-68.5 Q295,-43 329,-29 Q340,-24 344,-34 Q348,-44 338,-51 Q284,-88 249.5,-131.5 Q215,-175 193,-239 Z\" id=\"wave_u1F44B.12\" fill=\"#B0BEC5\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M914,-626 Q917,-614 928.5,-615 Q940,-616 939,-628 Q935,-688 912.5,-730.5 Q890,-773 858,-801 Q826,-829 793,-844 Q782,-849 777,-839.5 Q772,-830 782,-823 Q833,-783 865,-737.5 Q897,-692 914,-626 Z\" id=\"wave_u1F44B.13\" fill=\"#B0BEC5\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M975,-671 Q979,-659 990,-660 Q1001,-661 1000,-673 Q996,-733 973.5,-775.5 Q951,-818 919,-846 Q887,-874 854,-889 Q843,-894 838,-884.5 Q833,-875 843,-868 Q894,-828 926,-782.5 Q958,-737 975,-671 Z\" id=\"wave_u1F44B.14\" fill=\"#B0BEC5\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M707,-425 Q716,-430 722,-437.5 Q728,-445 724,-455 Q722,-459 713.5,-482 Q705,-505 692.5,-539.5 Q680,-574 666,-612.5 Q652,-651 639,-686 Q626,-721 617.5,-745 Q609,-769 608,-775 Q601,-794 607.5,-809.5 Q614,-825 628,-831.5 Q642,-838 656,-832 Q666,-827 672,-837 Q653,-856 630,-851 Q607,-846 592.5,-827.5 Q578,-809 585,-784 Q587,-776 596.5,-749 Q606,-722 619.5,-684 Q633,-646 648,-605.5 Q663,-565 676,-528.5 Q689,-492 698,-468 Q707,-444 709,-441 Q713,-431 707,-425 Z\" id=\"wave_u1F44B.2\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M569,-354 Q581,-362 587.5,-371 Q594,-380 583,-397 Q581,-401 567.5,-424.5 Q554,-448 535,-483 Q516,-518 494,-557.5 Q472,-597 452,-633 Q432,-669 417.5,-695 Q403,-721 399,-728 Q388,-748 396.5,-764 Q405,-780 421.5,-785.5 Q438,-791 452,-778 Q457,-774 462.5,-776.5 Q468,-779 472,-784 Q457,-806 437,-808.5 Q417,-811 399,-800.5 Q381,-790 373,-771.5 Q365,-753 374,-732 Q381,-715 398,-683.5 Q415,-652 437,-612 Q459,-572 482,-531 Q505,-490 525,-455 Q545,-420 558,-397 Q571,-374 573,-371 Q577,-361 569,-354 Z\" id=\"wave_u1F44B.3\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M475,-238 Q476,-240 477,-241 Q485,-253 487,-261.5 Q489,-270 478,-285 Q474,-291 457.5,-312.5 Q441,-334 417.5,-365 Q394,-396 368,-429.5 Q342,-463 319,-493.5 Q296,-524 280.5,-544.5 Q265,-565 263,-568 Q249,-586 254,-600 Q259,-614 271.5,-621 Q284,-628 293,-623 Q301,-619 306,-622 Q311,-625 313,-631 Q298,-645 280.5,-644 Q263,-643 249,-632 Q235,-621 230.5,-604 Q226,-587 236,-569 Q250,-545 286,-497.5 Q322,-450 371.5,-387 Q421,-324 474,-253 Q480,-246 475,-239 Z\" id=\"wave_u1F44B.4\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M908,115 Q832,151 768.5,149 Q705,147 655.5,121 Q606,95 569,60 Q527,19 497.5,-19 Q468,-57 443.5,-89.5 Q419,-122 391,-148 Q385,-153 366.5,-172.5 Q348,-192 323,-218.5 Q298,-245 273.5,-272 Q249,-299 230.5,-320.5 Q212,-342 206,-350 Q199,-361 204.5,-374.5 Q210,-388 223,-394 Q236,-400 251,-389 Q264,-381 271,-391 Q258,-402 254,-404 Q238,-416 221.5,-412.5 Q205,-409 193.5,-396 Q182,-383 180,-366 Q178,-349 191,-332 Q201,-320 221.5,-296.5 Q242,-273 266,-247 Q290,-221 310,-199 Q330,-177 339,-168 Q385,-121 411.5,-88.5 Q438,-56 457.5,-30 Q477,-4 499,22 Q521,48 558,81 Q623,141 686.5,159 Q750,177 807.5,165.5 Q865,154 913,125 Z\" id=\"wave_u1F44B.5\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M1087,-600 Q1089,-591 1090,-578.5 Q1091,-566 1088,-550 Q1083,-525 1077,-503.5 Q1071,-482 1066,-461 Q1053,-414 1044.5,-368 Q1036,-322 1042,-260 Q1052,-150 1026.5,-60 Q1001,30 929,89 Q857,148 727,167 Q789,176 844.5,157 Q900,138 944,103 Q988,68 1015,29 Q1042,-9 1054.5,-55.5 Q1067,-102 1069,-147 Q1071,-192 1069,-227.5 Q1067,-263 1065,-280 Q1064,-287 1064,-289 Q1062,-336 1071.5,-384 Q1081,-432 1091,-473 Q1098,-503 1103,-527.5 Q1108,-552 1106,-568 Q1104,-587 1087,-600 Z\" id=\"wave_u1F44B.6\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M912,-388 Q888,-414 862.5,-458 Q837,-502 812,-554 Q787,-606 763.5,-657.5 Q740,-709 719.5,-752.5 Q699,-796 684,-822 Q672,-842 655,-848 Q638,-854 623,-849 Q633,-846 646.5,-835.5 Q660,-825 671,-803 Q677,-792 690,-763.5 Q703,-735 719,-698.5 Q735,-662 751,-626.5 Q767,-591 778.5,-565.5 Q790,-540 794,-533 Q799,-524 809.5,-502 Q820,-480 834.5,-453 Q849,-426 865,-402 Q881,-378 896,-365 Q906,-357 911,-365 Q916,-373 916,-373 L916,-386 Q914,-385 912,-388 Z\" id=\"wave_u1F44B.7\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M398,-800 Q399,-801 399,-801 Q412,-806 426,-799 Q440,-792 447,-781 Q504,-690 551,-612.5 Q598,-535 627.5,-485.5 Q657,-436 661,-429 Q670,-414 679.5,-415.5 Q689,-417 701,-422 Q694,-421 689,-430 Q687,-432 673,-455.5 Q659,-479 637,-515 Q615,-551 590,-592.5 Q565,-634 541,-673 Q517,-712 498.5,-741.5 Q480,-771 473,-783 Q458,-806 436.5,-808.5 Q415,-811 398,-800 Z\" id=\"wave_u1F44B.8\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M569,-354 L569,-354 Q560,-347 553,-355 Q551,-357 534.5,-376 Q518,-395 493.5,-423.5 Q469,-452 441,-484.5 Q413,-517 386.5,-547.5 Q360,-578 341,-599.5 Q322,-621 315,-628 Q299,-646 279,-644 Q259,-642 245,-629 Q248,-629 250,-630 Q264,-639 279,-632.5 Q294,-626 303,-615 Q306,-612 321.5,-593 Q337,-574 361,-545.5 Q385,-517 411,-486 Q437,-455 461,-426 Q485,-397 502,-377 Q519,-357 523,-352 Q536,-337 546,-340.5 Q556,-344 566,-352 Q569,-354 569,-354 Z\" id=\"wave_u1F44B.9\" /></defs><g xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" id=\"wave_glyph212\"><use xlink:href=\"#wave_u1F44B.0\" fill=\"#FFCA28\" /><use xlink:href=\"#wave_u1F44B.1\" fill=\"#FAA700\" /><use xlink:href=\"#wave_u1F44B.2\" fill=\"#FAA700\" /><use xlink:href=\"#wave_u1F44B.3\" fill=\"#FAA700\" /><use xlink:href=\"#wave_u1F44B.4\" fill=\"#FAA700\" /><use xlink:href=\"#wave_u1F44B.5\" fill=\"#FAA700\" /><use xlink:href=\"#wave_u1F44B.6\" fill=\"#B55E19\" /><use xlink:href=\"#wave_u1F44B.7\" fill=\"#B55E19\" /><use xlink:href=\"#wave_u1F44B.8\" fill=\"#B55E19\" /><use xlink:href=\"#wave_u1F44B.9\" fill=\"#B55E19\" /><use xlink:href=\"#wave_u1F44B.10\" fill=\"#B55E19\" /><use xlink:href=\"#wave_u1F44B.11\" /><use xlink:href=\"#wave_u1F44B.12\" /><use xlink:href=\"#wave_u1F44B.13\" /><use xlink:href=\"#wave_u1F44B.14\" /></g></svg>", "yheart": "<svg class=\"emo\" viewBox=\"0 -950 1275 1200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><defs><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M761,-625 Q778,-625 817,-637 Q856,-649 892,-683 Q909,-699 910,-727 Q911,-755 887,-772 Q864,-788 832.5,-776 Q801,-764 781,-737 Q756,-701 738,-656 Q734,-645 741,-635 Q748,-625 761,-625 Z\" id=\"yheart_u1F494.3\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M197,-717 Q171,-685 165,-645 Q159,-605 168,-563.5 Q177,-522 196,-487 Q201,-479 209.5,-480.5 Q218,-482 219,-491 Q223,-513 229,-535 Q235,-557 246,-577 Q263,-610 286.5,-628 Q310,-646 339,-667 Q351,-677 358.5,-693.5 Q366,-710 364,-727 Q362,-744 348,-756 Q321,-777 293,-774.5 Q265,-772 239.5,-755.5 Q214,-739 197,-717 Z\" id=\"yheart_u1F494.4\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M918,-866 Q977,-866 1034.5,-842.5 Q1092,-819 1135,-769.5 Q1178,-720 1194,-644 Q1210,-568 1185,-463 Q1171,-403 1135,-340 Q1099,-277 1048.5,-215.5 Q998,-154 942.5,-97.5 Q887,-41 833,7 Q779,55 735,90.5 Q691,126 664.5,146 Q638,166 638,166 Q638,166 640,159.5 Q642,153 646,148 Q670,122 708.5,82.5 Q747,43 794,-6.5 Q841,-56 889,-111.5 Q937,-167 980.5,-226.5 Q1024,-286 1055.5,-346 Q1087,-406 1101,-464 Q1124,-563 1113,-635.5 Q1102,-708 1067,-754.5 Q1032,-801 981.5,-823 Q931,-845 874,-845 Q851,-845 830.5,-841 Q810,-837 792,-830 Q818,-846 849.5,-856 Q881,-866 918,-866 Z\" id=\"yheart_u1F496.2\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M919,-866 Q982,-866 1040,-842 Q1098,-818 1139.5,-769 Q1181,-720 1195.5,-644 Q1210,-568 1186,-463 Q1172,-403 1135.5,-340 Q1099,-277 1049,-215.5 Q999,-154 943,-97.5 Q887,-41 833,7 Q779,55 735,90.5 Q691,126 664.5,146 Q638,166 638,166 Q638,166 611.5,146 Q585,126 541,90.5 Q497,55 443,7 Q389,-41 333,-97.5 Q277,-154 226.5,-215.5 Q176,-277 139.5,-340 Q103,-403 89,-463 Q65,-568 81,-644 Q97,-720 140,-769 Q183,-818 240.5,-842 Q298,-866 357,-866 Q419,-866 465.5,-845 Q512,-824 545,-792.5 Q578,-761 598.5,-729.5 Q619,-698 628.5,-677 Q638,-656 638,-656 Q638,-656 647.5,-677 Q657,-698 677.5,-729.5 Q698,-761 731,-792.5 Q764,-824 810.5,-845 Q857,-866 919,-866 Z\" id=\"yheart_u1F499.0\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M324,-845 Q285,-845 245,-834 Q205,-823 170,-799 Q210,-833 259,-849.5 Q308,-866 356,-866 Q434,-866 491,-835.5 Q548,-805 584,-757 Q620,-709 637,-656 L614,-601 Q610,-594 602,-594 Q594,-594 592,-601 Q582,-628 561.5,-668.5 Q541,-709 508.5,-749.5 Q476,-790 430.5,-817.5 Q385,-845 324,-845 Z\" id=\"yheart_u1F49A.1\" /></defs><g xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" id=\"yheart_glyph38\"><use xlink:href=\"#yheart_u1F499.0\" x=\"-0.281\" fill=\"#FFCC32\" /><use xlink:href=\"#yheart_u1F49A.1\" fill=\"#F2A600\" /><use xlink:href=\"#yheart_u1F496.2\" fill=\"#F2A600\" /><use xlink:href=\"#yheart_u1F494.4\" fill=\"#FFF170\" /><use xlink:href=\"#yheart_u1F494.3\" fill=\"#FFF170\" /></g></svg>", "bheart": "<svg class=\"emo\" viewBox=\"0 -950 1275 1200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><defs><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M197,-717 Q171,-685 165,-645 Q159,-605 168,-563.5 Q177,-522 196,-487 Q201,-479 209.5,-480.5 Q218,-482 219,-491 Q223,-513 229,-535 Q235,-557 246,-577 Q263,-610 286.5,-628 Q310,-646 339,-667 Q351,-677 358.5,-693.5 Q366,-710 364,-727 Q362,-744 348,-756 Q321,-777 293,-774.5 Q265,-772 239.5,-755.5 Q214,-739 197,-717 Z\" id=\"bheart_u1F494.4\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M918,-866 Q977,-866 1034.5,-842.5 Q1092,-819 1135,-769.5 Q1178,-720 1194,-644 Q1210,-568 1185,-463 Q1171,-403 1135,-340 Q1099,-277 1048.5,-215.5 Q998,-154 942.5,-97.5 Q887,-41 833,7 Q779,55 735,90.5 Q691,126 664.5,146 Q638,166 638,166 Q638,166 640,159.5 Q642,153 646,148 Q670,122 708.5,82.5 Q747,43 794,-6.5 Q841,-56 889,-111.5 Q937,-167 980.5,-226.5 Q1024,-286 1055.5,-346 Q1087,-406 1101,-464 Q1124,-563 1113,-635.5 Q1102,-708 1067,-754.5 Q1032,-801 981.5,-823 Q931,-845 874,-845 Q851,-845 830.5,-841 Q810,-837 792,-830 Q818,-846 849.5,-856 Q881,-866 918,-866 Z\" id=\"bheart_u1F496.2\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M919,-866 Q982,-866 1040,-842 Q1098,-818 1139.5,-769 Q1181,-720 1195.5,-644 Q1210,-568 1186,-463 Q1172,-403 1135.5,-340 Q1099,-277 1049,-215.5 Q999,-154 943,-97.5 Q887,-41 833,7 Q779,55 735,90.5 Q691,126 664.5,146 Q638,166 638,166 Q638,166 611.5,146 Q585,126 541,90.5 Q497,55 443,7 Q389,-41 333,-97.5 Q277,-154 226.5,-215.5 Q176,-277 139.5,-340 Q103,-403 89,-463 Q65,-568 81,-644 Q97,-720 140,-769 Q183,-818 240.5,-842 Q298,-866 357,-866 Q419,-866 465.5,-845 Q512,-824 545,-792.5 Q578,-761 598.5,-729.5 Q619,-698 628.5,-677 Q638,-656 638,-656 Q638,-656 647.5,-677 Q657,-698 677.5,-729.5 Q698,-761 731,-792.5 Q764,-824 810.5,-845 Q857,-866 919,-866 Z\" id=\"bheart_u1F499.0\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M325,-845 Q285,-845 245.5,-834 Q206,-823 170,-799 Q210,-833 259,-849.5 Q308,-866 357,-866 Q435,-866 491.5,-835.5 Q548,-805 584.5,-757 Q621,-709 638,-656 L614,-601 Q611,-594 603,-594 Q595,-594 592,-601 Q582,-628 562,-668.5 Q542,-709 509.5,-749.5 Q477,-790 431,-817.5 Q385,-845 325,-845 Z\" id=\"bheart_u1F499.1\" /><path xmlns=\"http://www.w3.org/2000/svg\" d=\"M761,-625 Q779,-625 818,-636.5 Q857,-648 893,-683 Q909,-699 910,-727 Q911,-755 887,-772 Q864,-788 832.5,-775.5 Q801,-763 782,-736 Q756,-701 739,-656 Q734,-645 741.5,-635 Q749,-625 761,-625 Z\" id=\"bheart_u1F499.4\" /></defs><g xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" id=\"bheart_glyph36\"><use xlink:href=\"#bheart_u1F499.0\" fill=\"#1976D2\" /><use xlink:href=\"#bheart_u1F499.1\" fill=\"#0D47A1\" /><use xlink:href=\"#bheart_u1F496.2\" x=\"0.281\" y=\"0.094\" fill=\"#0D47A1\" /><use xlink:href=\"#bheart_u1F494.4\" x=\"0.375\" fill=\"white\" opacity=\"0.3\" /><use xlink:href=\"#bheart_u1F499.4\" fill=\"white\" opacity=\"0.3\" /></g></svg>", "sparkle": "<svg class=\"emo\" viewBox=\"0 -950 1275 1200\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><defs></defs><g xmlns=\"http://www.w3.org/2000/svg\" id=\"sparkle_glyph539\"><path d=\"M1177,-380 Q1191,-375 1191.5,-360.5 Q1192,-346 1178,-341 L1046,-296 Q984,-275 946.5,-227.5 Q909,-180 892,-116 L834,161 Q833,165 830,170.5 Q827,176 818,176 Q809,176 805.5,170.5 Q802,165 801,161 L744,-116 Q726,-180 688.5,-227.5 Q651,-275 589,-296 L457,-341 Q443,-346 443.5,-360.5 Q444,-375 458,-380 L588,-422 Q651,-442 688.5,-490 Q726,-538 744,-602 L801,-882 Q802,-886 806,-890.5 Q810,-895 818,-895 Q826,-895 829.5,-890.5 Q833,-886 834,-882 L891,-602 Q909,-538 946.5,-490 Q984,-442 1047,-422 Z\" fill=\"#FDD835\" /><path d=\"M1190,-368 Q1176,-370 1141.5,-376 Q1107,-382 1062,-390 Q1017,-398 973,-405 Q922,-414 897,-438 Q872,-462 862,-504.5 Q852,-547 845,-612 L827,-893 Q829,-891 831,-887.5 Q833,-884 834,-882 L891,-602 Q909,-538 946.5,-490 Q984,-442 1047,-422 L1177,-380 Q1186,-377 1190,-368 Z\" fill=\"#FFEE58\" /><path d=\"M1190,-353 Q1187,-344 1178,-341 L1046,-296 Q984,-275 946.5,-227.5 Q909,-180 892,-116 L834,161 Q830,175 818,176 L840,-114 Q840,-205 872,-245.5 Q904,-286 964,-301 Z\" fill=\"#F4B400\" /><path d=\"M429,-136 L495,-112 Q503,-110 503,-101.5 Q503,-93 495,-90 L423,-63 Q374,-51 354,-23.5 Q334,4 324,41 L298,142 Q297,148 287,148 Q277,148 275,142 L253,41 Q243,4 221.5,-23.5 Q200,-51 164,-63 L87,-90 Q79,-93 79,-101 Q79,-109 87,-112 L164,-145 Q200,-157 221.5,-184.5 Q243,-212 253,-249 L275,-355 Q277,-360 287,-360 Q297,-360 298,-355 L331,-240 Q338,-216 345.5,-197 Q353,-178 371.5,-163.5 Q390,-149 429,-136 Z\" fill=\"#FDD835\" /><path d=\"M305,-242 L291,-360 Q291,-360 295,-358.5 Q299,-357 303,-348 Q303,-348 311,-321 Q319,-294 329,-249 Q339,-204 358.5,-179 Q378,-154 429,-136 L495,-112 Q499,-111 501,-108 L376,-132 Q346,-140 332.5,-151.5 Q319,-163 314,-184 Q309,-205 305,-242 Z\" fill=\"#FFEE58\" /><path d=\"M307,16 L294,146 Q294,146 298,143 Q302,140 306,131 Q308,128 312,113.5 Q316,99 320.5,82 Q325,65 328,52.5 Q331,40 331,40 Q339,4 350.5,-14 Q362,-32 379.5,-42 Q397,-52 423,-63 L484,-83 Q491,-84 495,-88 Q499,-92 499,-92 L405,-88 Q360,-88 333.5,-62.5 Q307,-37 307,16 Z\" fill=\"#F4B400\" /><path d=\"M598,-686 L522,-661 Q500,-653 493,-631 L465,-522 Q464,-518 459.5,-518 Q455,-518 454,-522 L427,-631 Q421,-653 399,-661 L323,-687 Q319,-688 319.5,-692 Q320,-696 324,-698 L395,-716 Q421,-723 427,-748 L454,-865 Q455,-869 459.5,-869 Q464,-869 465,-865 L494,-747 Q501,-723 525,-716 L597,-697 Q601,-696 601.5,-692 Q602,-688 598,-686 Z\" fill=\"#F4B400\" /><path d=\"M599,-682 L599,-682 Q606,-684 606,-692 Q606,-699 599,-701 L526,-721 Q504,-727 498,-749 L470,-866 Q468,-874 460,-874 Q451,-874 450,-866 L423,-749 Q417,-727 394,-721 L322,-702 Q315,-700 315,-693 Q314,-685 321,-682 L397,-656 Q417,-649 423,-630 L450,-521 Q452,-513 460,-513 Q468,-513 470,-521 L498,-630 Q504,-650 523,-656 Z M596,-691 L520,-665 Q496,-657 489,-633 L489,-633 L461,-523 Q460,-523 460,-523 Q459,-523 459,-523 L432,-632 L432,-632 Q424,-657 400,-665 L325,-691 Q324,-691 324,-692 Q324,-693 325,-693 L397,-712 Q425,-719 432,-747 L432,-747 L459,-864 Q459,-865 460,-865 Q460,-865 461,-864 L489,-746 L489,-746 Q497,-719 524,-712 L596,-692 Q597,-692 597,-692 Q597,-691 596,-691 Z\" fill=\"#F4B400\" /></g></svg>"};
 const SHADOW = {"shadow": "data:image/png;base64,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", "m": 30, "W": 300, "H": 180};
@@ -48,7 +48,7 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
   const PARAMS = new URLSearchParams(location.search);
   const RENDER = PARAMS.get('render') === '1';
   const PREVIEW = PARAMS.get('preview') === '1' || PARAMS.get('play') === '1' || window.AUTOPLAY === true;
-  const DURATION = 15;
+  const DURATION = 37.5;
   const SW = 1080, SH = 1920;
 
   // ------------------------------------------------------------------ palette
@@ -317,7 +317,7 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     <g fill="none" stroke="#fff" stroke-width="7" stroke-linejoin="round">
       ${[[370, 1400], [370, 1330], [330, 1260], [410, 1260]].map(([x, y]) => `<rect x="${x}" y="${y}" width="76" height="66" rx="8"/>`).join('')}
     </g>
-    <ellipse cx="640" cy="1390" rx="190" ry="54" fill="none" stroke="#fff" stroke-width="7" opacity=".9"/>
+    <ellipse cx="600" cy="1430" rx="124" ry="42" fill="none" stroke="#fff" stroke-width="7" opacity=".9"/>
     ${[[60, 1300], [1000, 1460], [260, 1470], [700, 1200]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="14" ry="8" fill="${C.grey.l}" ${ol(3)}/>`).join('')}
 
     <!-- foreground flower bed -->
@@ -334,17 +334,21 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
 
   // ------------------------------------------------------------------ choreography (seconds)
   const DOOR = [540, 1100];
-  const T_DOOR = 3.0;
+  const T_DOOR = 1.35;
   //    spot x, y, leave time, curve bend (px, + to the right of the path)
   const SPOT = {
-    a: [300, 1240, 3.05, -120], g: [690, 1250, 3.2, 110], d: [520, 1330, 3.32, -60], e: [690, 1420, 3.45, 90],
-    b: [190, 1400, 3.58, -150], c: [408, 1440, 3.7, -70], f: [130, 1180, 3.84, -40],
+    a: [300, 1240, 1.4, -120], g: [690, 1250, 1.52, 110], d: [490, 1430, 1.62, -60], e: [710, 1430, 1.74, 90],
+    b: [190, 1400, 1.85, -150], c: [408, 1440, 1.96, -70], f: [130, 1180, 2.08, -40],
   };
   const HERO = [930, 1330];
-  const THROW = 5.05, LAND = 6.1;                    // a throws, the ball sails over g and lands by the boy
+  // a and g play catch: release times, flight 0.85 s (ballistic arc)
+  const PASS0 = 3.45, PASS = 1.2, FLIGHT = 0.85;
+  const passes = Array.from({ length: 30 }, (_, i) => ({ r: PASS0 + i * PASS, c: PASS0 + i * PASS + FLIGHT, from: i % 2 ? 'g' : 'a', to: i % 2 ? 'a' : 'g' }));
+  const LAND = 99;
   const BALL_REST = [868, 1392];
-  const PICK = 11.85, JUMP = 12.05, CATCH = 13.0;    // the boy picks it up, jumps, throws it back to a
-  const CHEER = 13.0;
+  const PICK = 99, JUMP = 99, CATCH = 99, CHEER = 99;
+  const STEP = 5.75, STEP_END = 6.35, STEP_DX = -54;   // the boy's small step toward the game
+  const WIN = [700, 985];                             // where he looks: the round window opens here (scene 3)
 
   const curve = (k) => {
     const [x1, y1, , bend] = SPOT[k];
@@ -431,23 +435,31 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     const cheerDelay = { a: 0.15, g: 0, b: 0.25, c: 0.1, d: 0.3, e: 0.2, f: 0.35 }[k];
     const tc = CHEER + cheerDelay;
     const cheering = t > tc;
-    if (k === 'a') {
-      // holds the ball, winds up (anticipation), throws on an arc, follows through, "oops", waves the boy over, catches
-      P.arms = kf(t, [[0, POSE.hold], [THROW - 0.45, POSE.hold], [THROW - 0.05, POSE.back, EZ.anti], [THROW + 0.12, POSE.up, EZ.out], [THROW + 0.55, POSE.open], [LAND + 0.1, POSE.open], [LAND + 0.35, POSE.cheeks, EZ.over], [LAND + 1.4, POSE.cheeks], [LAND + 1.9, POSE.wave], [CATCH - 0.4, POSE.wave], [CATCH - 0.05, POSE.up, EZ.out], [CATCH + 0.25, POSE.hold, EZ.over]]);
-      P.sq = (P.sq || 0) + kf(t, [[0, 0], [THROW - 0.45, 0], [THROW - 0.05, 0.13, EZ.anti], [THROW + 0.1, -0.12, EZ.out], [THROW + 0.45, 0, EZ.io]]);
-      P.lean = (P.lean || 0) + kf(t, [[0, 0], [THROW - 0.45, 0], [THROW - 0.05, -8], [THROW + 0.15, 10, EZ.out], [THROW + 0.6, 0]]);
-      P.mouth = t > LAND && t < LAND + 1.5 ? 'o' : t > THROW - 0.3 && t < THROW + 0.4 ? 'grin' : 'open';
-      P.look = t > THROW && t < CATCH ? lookToward(P, 820, 900) : [3, 0];
-      if (t > LAND + 1.9 && t < CATCH - 0.4) { const w = Math.sin((t - LAND - 1.9) * TAU * 1.4); P.arms = [[-12, 8], [150 + 20 * w, -24 - 20 * w]]; P.mouth = 'open'; }
-    } else if (k === 'g') {
-      // anticipates the catch, jumps for it on an arc, just misses, lands with a squash, laughs it off
-      const jt = 5.82;
-      P.lift = kf(t, [[0, 0], [jt - 0.32, 0], [jt, 70, EZ.up], [jt + 0.34, 0, EZ.in]]);
-      P.sq = (P.sq || 0) + kf(t, [[0, 0], [jt - 0.55, 0], [jt - 0.32, 0.16, EZ.io], [jt - 0.22, -0.14, EZ.out], [jt + 0.3, -0.05], [jt + 0.36, 0.17, EZ.out], [jt + 0.62, 0, EZ.io]]);
-      P.arms = kf(t, [[0, POSE.rest], [THROW, POSE.rest], [jt - 0.3, POSE.open, EZ.io], [jt, POSE.up, EZ.out], [jt + 0.7, POSE.up], [jt + 1.2, POSE.rest]]);
-      P.look = t > THROW ? lookToward(P, t < LAND ? 760 : HERO[0], t < LAND ? 860 : 1150) : [-3, 0];
-      P.mouth = t > jt - 0.4 && t < jt + 0.5 ? 'o' : 'grin';
-      P.hairSw = (P.hairSw || 0) + kf(t, [[0, 0], [jt - 0.3, 0], [jt, -24, EZ.up], [jt + 0.4, 18, EZ.in], [jt + 1.2, 0, EZ.out]]);
+    if (k === 'a' || k === 'g') {
+      // catch: open the arms before the ball arrives, squash on the catch;
+      // throw: wind back (anticipation), release on a stretch, follow through
+      let arms = POSE.hold, sq = 0, lean = 0, mouth = 'open';
+      const other = k === 'a' ? SPOT.g : SPOT.a;
+      const dir = Math.sign(other[0] - P.x);
+      for (const ps of passes) {
+        if (ps.to === k && t > ps.c - 0.55 && t < ps.c + 0.35) {
+          arms = kf(t, [[ps.c - 0.55, POSE.rest], [ps.c - 0.08, POSE.up, EZ.out], [ps.c + 0.3, POSE.hold, EZ.over]]);
+          sq = 0.14 * bump(t, ps.c + 0.04, 0.06); mouth = t < ps.c ? 'o' : 'grin';
+        }
+        if (ps.from === k && t > ps.r - 0.45 && t < ps.r + 0.5) {
+          arms = kf(t, [[ps.r - 0.45, POSE.hold], [ps.r - 0.05, POSE.back, EZ.anti], [ps.r + 0.1, POSE.up, EZ.out], [ps.r + 0.5, POSE.rest, EZ.io]]);
+          sq = kf(t, [[ps.r - 0.45, 0], [ps.r - 0.05, 0.12, EZ.anti], [ps.r + 0.08, -0.12, EZ.out], [ps.r + 0.45, 0, EZ.io]]);
+          lean = kf(t, [[ps.r - 0.45, 0], [ps.r - 0.05, -7 * dir], [ps.r + 0.15, 9 * dir, EZ.out], [ps.r + 0.5, 0]]);
+          mouth = 'grin';
+        }
+        const holding = (ps.to === k && t >= ps.c + 0.35 && t <= ps.r + PASS - 0.45) ;
+        if (holding) { arms = POSE.hold; mouth = 'smile'; }
+        if (ps.from === k && ps.r === PASS0 && t < ps.r - 0.45) arms = POSE.hold;
+      }
+      if (k === 'g' && t < PASS0 + FLIGHT - 0.55) arms = POSE.rest;
+      P.arms = arms; P.sq = (P.sq || 0) + sq; P.lean = (P.lean || 0) + lean; P.mouth = mouth;
+      P.look = [dir * 4 * (P.flip ? -1 : 1), -1.5];
+      P.hairSw = (P.hairSw || 0) - lean * 1.2;
     } else if (k === 'b') {
       // jump rope (rope arcs over the head and under the feet), stops when the ball lands
       const stopAt = reactT + 0.2;
@@ -481,7 +493,7 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
       if (t > stopAt) { P.lift = 0; P.legs = [[4, 0], [-4, 0]]; P.arms = POSE.rest; P.look = lookToward(P, HERO[0], HERO[1] - 200); P.mouth = 'smile'; }
     } else if (k === 'd' || k === 'e') {
       // tag around the circle; they ease to a stop when the ball lands
-      const CH = [610, 1388, 150, 44];
+      const CH = [600, 1430, 110, 36];
       const tr = travel(k, t);
       const base = Math.atan2((SPOT[k][1] - CH[1]) / CH[3], (SPOT[k][0] - CH[0]) / CH[2]);
       const stopAt = reactT + (k === 'd' ? 0.1 : 0.25);
@@ -536,89 +548,52 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     }
   }
 
-  // the boy by the wall: curious, startled by the ball, thinks it over, decides, and joins in
+  // the boy by the wall: curious (never sad), bounces on his toes, takes one small step, looks up at the wall
   function hero(t, ballXY) {
     const P = { x: HERO[0], y: HERO[1], s: depth(HERO[1]) * 1.03, blink: blinkAt(t, 0.31) };
     const breathe = Math.sin(t * TAU * 0.4) * 0.012;
-    P.arms = kf(t, [[0, POSE.straps], [LAND + 0.02, POSE.straps], [LAND + 0.16, [[-34, 30], [34, -30]], EZ.out], [LAND + 0.8, POSE.straps, EZ.io],
-      [7.5, POSE.straps], [8.1, POSE.chin, EZ.io], [10.15, POSE.chin], [10.4, POSE.fists, EZ.over], [11.25, POSE.fists], [PICK, POSE.down, EZ.io],
-      [JUMP - 0.04, POSE.down], [JUMP + 0.14, POSE.up, EZ.out], [JUMP + 0.75, POSE.up], [13.25, POSE.open, EZ.io], [14.2, POSE.open], [14.7, POSE.wave, EZ.io]]);
-    if (t > 14.7) { const w = Math.sin((t - 14.7) * TAU * 1.4); P.arms = [[-118, 26], [150 + 20 * w, -24 - 20 * w]]; }
-    // body: surprise hop at the thud, crouch to pick up the ball (anticipation), big spring jump, land, spin
-    P.lift = kf(t, [[0, 0], [LAND, 0], [LAND + 0.14, 16, EZ.up], [LAND + 0.34, 0, EZ.in], [JUMP, 0], [JUMP + 0.32, 118, EZ.up], [JUMP + 0.62, 0, EZ.in], [13.3, 0], [13.55, 40, EZ.up], [13.8, 0, EZ.in]]);
-    P.sq = breathe + kf(t, [[0, 0], [LAND, 0], [LAND + 0.08, -0.1, EZ.out], [LAND + 0.34, -0.03], [LAND + 0.42, 0.08, EZ.out], [LAND + 0.7, 0, EZ.io],
-      [11.25, 0], [PICK, 0.17, EZ.io], [JUMP - 0.05, 0.22, EZ.io], [JUMP + 0.06, -0.18, EZ.out], [JUMP + 0.3, -0.04, EZ.io], [JUMP + 0.58, -0.1], [JUMP + 0.66, 0.22, EZ.out], [JUMP + 0.95, 0, EZ.io],
-      [13.3, 0], [13.36, 0.08, EZ.out], [13.45, -0.08], [13.8, -0.04], [13.86, 0.12, EZ.out], [14.1, 0, EZ.io]]);
-    // sway while thinking (slow in/out), a quick determined head shake, then a happy spin
-    const sway = 7.6 < t && t < 10.2 ? 5 * Math.sin((t - 7.6) / 2.6 * TAU * 1.5) * Math.sin(Math.PI * prog(t, 7.6, 10.2)) : 0;
-    P.lean = sway + kf(t, [[0, 0], [11.25, 0], [PICK, -6, EZ.io], [JUMP, -8], [JUMP + 0.2, 4, EZ.out], [JUMP + 0.65, 0]]);
-    const shake = 10.35 < t && t < 11.0 ? 9 * Math.sin((t - 10.35) * TAU * 5.5) * (1 - prog(t, 10.35, 11.0)) : 0;
-    P.tilt = shake + sway * 0.8 + kf(t, [[0, -3], [LAND, -3], [LAND + 0.3, 4, EZ.out], [7.5, 4], [8.1, -6], [10.2, -6]]) * (t < 10.2 ? 1 : 0);
-    const spin = EZ.io(prog(t, 13.3, 13.68));
-    P.spinX = Math.cos(spin * TAU);
-    if (Math.abs(P.spinX) < 0.08) P.spinX = 0.08 * Math.sign(P.spinX || 1);
+    const st = prog(t, STEP, STEP_END), stE = EZ.io(st);
+    P.x = HERO[0] + STEP_DX * stE;
+    // anticipation (lean back, settle low) -> the step on an arc -> land with a squash -> follow-through
+    P.lean = kf(t, [[0, 0], [3.6, 0], [4.2, -3, EZ.io], [5.2, -3], [STEP - 0.3, 0], [STEP, 4, EZ.anti], [STEP + 0.3, -6, EZ.io], [STEP_END, -2, EZ.io]]) + wob(t, STEP_END, -5, 2.2, 3.2);
+    P.lift = Math.sin(Math.PI * st) * 10 + kf(t, [[0, 0], [4.85, 0], [4.97, 7, EZ.up], [5.09, 0, EZ.in], [5.21, 6, EZ.up], [5.33, 0, EZ.in]]);
+    P.sq = breathe + kf(t, [[0, 0], [STEP - 0.3, 0], [STEP, 0.07, EZ.anti], [STEP + 0.1, -0.05, EZ.out], [STEP_END - 0.02, 0], [STEP_END + 0.06, 0.08, EZ.out], [STEP_END + 0.35, 0, EZ.io]])
+      + 0.06 * (bump(t, 5.09, 0.04) + bump(t, 5.33, 0.04));
+    // the stepping leg lifts and swings forward; the other stays planted
+    const legLift = Math.sin(Math.PI * st);
+    P.legs = [[-16 * legLift - 4 * stE + 4 * (1 - stE), -42 * legLift], [-4, 0]];
+    P.arms = kf(t, [[0, POSE.straps], [STEP - 0.25, POSE.straps], [STEP + 0.15, [[-16, 22], [18, -30]], EZ.io], [STEP_END + 0.2, POSE.straps, EZ.io]]);
+    P.tilt = kf(t, [[0, -3], [3.6, -3], [4.4, 4, EZ.io], [6.9, 4], [7.35, -7, EZ.io]]) + wob(t, STEP_END, 4, 2.4, 3);
     P.hairSw = -P.lean;
-    // face
-    if (t < LAND) {
+    // face: watches the game, gets excited, then looks up and to the side at the wall
+    if (t < 6.9) {
       P.look = ballXY ? lookToward(P, ballXY[0], ballXY[1]) : [-3, 0];
-      P.mouth = 'smile'; P.brow = 2;
-    } else if (t < 7.5) {
-      P.look = t < LAND + 0.4 ? [0, -1] : [-3, 3.2];
-      P.mouth = t < LAND + 0.7 ? 'o' : 'smile'; P.brow = t < LAND + 0.7 ? 7 : 3;
-      if (t < LAND + 0.5) P.blink = 0;
-    } else if (t < 10.25) {
-      P.look = [2.5 * Math.sin((t - 7.5) * 1.6), -3];
-      P.mouth = 'smile'; P.brow = 6;
-    } else if (t < 11.3) {
-      P.look = [0, 0]; P.mouth = t < 10.7 ? 'smile' : 'grin'; P.browAng = t < 10.7 ? 3 : 0; P.brow = t < 10.7 ? 0 : 4;
-    } else if (t < JUMP) {
-      P.look = [-2.5, 3.5]; P.mouth = 'grin';
+      P.mouth = t > 4.8 && t < 5.4 ? 'grin' : t > STEP_END ? 'grin' : 'smile';
+      P.brow = t > 4.6 ? 4 : 2;
     } else {
-      P.look = ballXY && t < CATCH ? lookToward(P, ballXY[0], ballXY[1]) : [-3, 0];
-      P.mouth = 'grin'; P.brow = 3;
+      P.look = lookToward(P, WIN[0], WIN[1]);
+      P.mouth = 'smile'; P.brow = 6;
+      if (t < 7.05) P.blink = Math.sin(Math.PI * prog(t, 6.9, 7.05));
     }
     return P;
   }
 
   // ------------------------------------------------------------------ the ball (ballistic arcs, squash on contact)
-  function ball(t, pose, heroP) {
-    const a = pose.a;
+  function ball(t, pose) {
+    const a = pose.a, g = pose.g;
     if (!a) return null;
-    const handA = () => { const l = handWorld(a, -1), r = handWorld(a, 1); return [(l[0] + r[0]) / 2, (l[1] + r[1]) / 2 - 6]; };
-    if (t < THROW) return { p: handA(), sq: 0, rot: 0 };
-    const B0 = [318, 1020];
-    const G = (p, q, f, H) => [lerp(p[0], q[0], f), lerp(p[1], q[1], f) - H * 4 * f * (1 - f)];
-    if (t < LAND) {
-      const f = prog(t, THROW, LAND);
-      return { p: G(B0, [820, BALL_REST[1]], f, 640), sq: -0.12 * Math.sin(Math.PI * f) * 0.5, rot: f * 540 };
-    }
-    // bounces lose energy: each shorter and lower, squash at every contact
-    const B = [[LAND, 820, 0.5, 74], [LAND + 0.5, 850, 0.3, 24]];
-    for (const [tb, xb, d, h] of B) {
-      if (t < tb + d) {
-        const f = prog(t, tb, tb + d);
-        const x0 = xb, x1 = xb === 820 ? 850 : BALL_REST[0] - 6;
-        const contact = Math.max(bump(t, tb, 0.035), bump(t, tb + d, 0.035) * 0.5);
-        return { p: G([x0, BALL_REST[1]], [x1, BALL_REST[1]], f, h), sq: 0.32 * contact * (h / 74), rot: 540 + (t - LAND) * 400 };
+    const holdAt = (P) => { const l = handWorld(P, -1), r = handWorld(P, 1); return [(l[0] + r[0]) / 2, (l[1] + r[1]) / 2 - 6]; };
+    if (t < PASS0 || !g) return { p: holdAt(a), sq: 0, rot: 0 };
+    for (const ps of passes) {
+      if (t >= ps.r && t < ps.c) {
+        const f = prog(t, ps.r, ps.c);
+        const p0 = holdAt(pose[ps.from]), p1 = holdAt(pose[ps.to]);
+        const p = [lerp(p0[0], p1[0], f), lerp(p0[1], p1[1], f) - 230 * 4 * f * (1 - f)];
+        return { p, sq: -0.1 * Math.sin(Math.PI * f), rot: (ps.from === 'a' ? 1 : -1) * f * 400 };
       }
+      if (t >= ps.c && t < ps.r + PASS) return { p: holdAt(pose[ps.to]), sq: 0.28 * bump(t, ps.c, 0.05), rot: 0 };
     }
-    if (t < PICK + 0.12) {
-      const f = EZ.out(prog(t, LAND + 0.8, LAND + 2.0));
-      return { p: [lerp(BALL_REST[0] - 6, BALL_REST[0], f), BALL_REST[1]], sq: 0, rot: 700 + f * 40 };
-    }
-    const handH = () => { const l = handWorld(heroP, -1), r = handWorld(heroP, 1); return [(l[0] + r[0]) / 2, (l[1] + r[1]) / 2 - 8]; };
-    if (t < JUMP + 0.14) {
-      const f = EZ.io(prog(t, PICK, PICK + 0.12));
-      const hh = handH();
-      return { p: [lerp(BALL_REST[0], hh[0], f), lerp(BALL_REST[1], hh[1], f)], sq: 0, rot: 740 };
-    }
-    if (t < CATCH) {
-      const f = prog(t, JUMP + 0.14, CATCH);
-      const from = handH(), to = handA();
-      const start = [HERO[0] - 8, HERO[1] - 420];
-      return { p: G(start, to, f, 300), sq: -0.1 * Math.sin(Math.PI * f), rot: 740 - f * 720 };
-    }
-    return { p: handA(), sq: 0.25 * bump(t, CATCH, 0.05), rot: 20 };
+    return null;
   }
 
   // ------------------------------------------------------------------ DOM
@@ -645,7 +620,7 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     <div id="ui">
       <div class="tl cap1" id="c1" style="top:262px">${mw('הצלצול להפסקה.')}</div>
       <div class="tl cap2" id="c2" style="top:384px">${mw('הרגע הכי ארוך ביום שלו.')}</div>
-      <div class="lab" id="lab1">כולם יוצאים לשחק</div>
+      <div class="lab" id="lab1">הפסקה</div>
       <div class="lab" id="lab2">צעד קטן</div>
     </div>
     <div id="grain"></div>`;
@@ -657,10 +632,8 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
   // ------------------------------------------------------------------ camera (keyframed, slow in / slow out)
   function camera(t) {
     // [scale, focus x, focus y]: the focus point lands at screen (540, 1000).
-    // Establish, push in close on the boy while he decides, pull back out for the payoff.
-    const k = kf(t, [[0, [1.0, 540, 1000]], [6.5, [1.035, 545, 1010], EZ.io], [9.0, [1.55, 880, 1180], EZ.io], [11.7, [1.6, 885, 1190], EZ.io], [13.1, [1.03, 560, 1010], EZ.io], [15, [1.05, 560, 1010], EZ.io]]);
-    const dip = wob(t, LAND, 10, 7, 9) + wob(t, JUMP + 0.62, 9, 7, 10);
-    return { s: k[0], fx: k[1], fy: k[2], dy: dip };
+    const k = kf(t, [[0, [1.0, 540, 1000]], [4.4, [1.035, 545, 1005], EZ.io], [6.3, [1.5, 860, 1170], EZ.io], [7.6, [1.56, 835, 1150], EZ.io]]);
+    return { s: k[0], fx: k[1], fy: k[2], dy: 0 };
   }
   const toScreen = (cam, x, y) => [540 + (x - cam.fx) * cam.s, 1000 + (y - cam.fy) * cam.s + cam.dy];
 
@@ -693,8 +666,8 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     $('rays').setAttribute('transform', `rotate(${f1(t * 10)})`);
 
     // bell: a small pull back (anticipation), then a ring that swings on an arc and dies away
-    const ringT = 0.9;
-    const pre = kf(t, [[0, 0], [0.45, 0], [ringT - 0.05, -10, EZ.anti], [ringT, 0, EZ.in]]);
+    const ringT = 0.5;
+    const pre = kf(t, [[0, 0], [0.12, 0], [ringT - 0.05, -10, EZ.anti], [ringT, 0, EZ.in]]);
     const swing = t > ringT ? 28 * Math.exp(-(t - ringT) * 1.1) * Math.sin((t - ringT) * TAU * 2.4) : 0;
     bell.setAttribute('transform', `translate(540,568) rotate(${f2(pre + swing)})`);
     clapper.setAttribute('transform', `rotate(${f2(t > ringT ? -0.6 * swing * Math.cos((t - ringT) * 3) : 0)})`);
@@ -714,7 +687,7 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     });
 
     // doors: rattle as the kids push (anticipation), then burst open with overshoot
-    const rattle = t > 2.1 && t < T_DOOR ? Math.sin(t * TAU * 9) * 0.03 * prog(t, 2.1, T_DOOR) : 0;
+    const rattle = t > 0.85 && t < T_DOOR ? Math.sin(t * TAU * 9) * 0.03 * prog(t, 0.85, T_DOOR) : 0;
     const open = sp(t, T_DOOR, SPR.door);
     const ds = clamp(1 - 0.86 * open + rattle, 0.06, 1.05);
     $('doorL').setAttribute('transform', `translate(478,0) scale(${f3(ds)},1) translate(-478,0)`);
@@ -722,11 +695,10 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
 
     // kids, the boy, the ball
     const { out, pose } = yardKids(t);
-    const preBall = pose.a && t < PICK ? ball(t, pose, null) : null;
+    const preBall = ball(t, pose);
     const heroP = hero(t, preBall ? preBall.p : null);
     out.push(['hero', heroP]);
-    const B = ball(t, pose, heroP);
-    if (B && t > JUMP + 0.14 && t < CATCH) heroP.look = lookToward(heroP, B.p[0], B.p[1]);
+    const B = preBall;
     out.sort((p, q) => p[1].y - q[1].y);
     kidsG.innerHTML = out.map(([k, P]) => (P.back ? `<g transform="translate(${f1(P.x)},${f1(P.y)}) scale(${f3((P.flip ? -1 : 1) * P.s)},${f3(P.s)})"><g transform="scale(${f3(1 + (P.sq || 0) * 0.6)},${f3(1 - (P.sq || 0))}) translate(0,${f1(-(P.lift || 0))})">${P.back}</g></g>` : '') + kid(k, KIDS[k], P)).join('');
     ballG.style.display = B ? '' : 'none';
@@ -751,11 +723,11 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     dustG.innerHTML = puffs.join('');
 
     // captions (the hook), then they clear the frame for the push-in
-    words($('c1'), t, 1.15);
-    words($('c2'), t, 2.6);
-    $('ui').querySelectorAll('.tl').forEach((n) => { n.style.opacity = f2(1 - EZ.io(prog(t, 6.7, 7.2))); });
+    words($('c1'), t, 0.6);
+    words($('c2'), t, 1.9);
+    $('ui').querySelectorAll('.tl').forEach((n) => { n.style.opacity = f2(1 - EZ.io(prog(t, 4.9, 5.4))); });
 
-    leaders.innerHTML = label('lab1', t, 3.3, 5.5, [540, 1040], [96, 520], cam) + label('lab2', t, JUMP + 0.1, 14.7, [HERO[0], HERO[1] - 300], [560, 300], cam);
+    leaders.innerHTML = label('lab1', t, 2.6, 4.45, [610, 1310], [96, 520], cam) + label('lab2', t, STEP + 0.05, 7.55, [HERO[0] + STEP_DX - 10, HERO[1] + 4], [650, 1290], cam);
   }
 
   // ------------------------------------------------------------------ sound on picture
@@ -764,21 +736,15 @@ const SHADOW = {"shadow": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAC
     const u = (s) => (s - OFF) / P;
     const H = [];
     const add = (s, label, sfx, o) => H.push([u(s), label, sfx, o]);
-    [0, 0.42, 0.84].forEach((d, i) => add(0.9 + d, `bell ${i + 1}`, 'bell', { pitch: i % 2 ? 'A5' : 'D6', gain: 0.26 - i * 0.04 }));
-    add(1.15, 'caption 1', 'blip', { pitch: 'A5', gain: 0.08 });
-    add(2.6, 'caption 2', 'blip', { pitch: 'D6', gain: 0.08 });
-    add(T_DOOR, 'doors burst open', 'whoosh', { len: 0.45, from: 300, to: 1800, gain: 0.16 });
-    Object.entries(SPOT).forEach(([k, s], i) => add(s[2] + 0.4, `${k} lands`, 'pop', { pitch: ['D5', 'F#5', 'A5', 'B5', 'D6', 'E6', 'F#6'][i], gain: 0.1 }));
-    add(THROW, 'throw', 'whoosh', { len: 0.5, from: 500, to: 2200, gain: 0.14 });
-    add(LAND, 'thud', 'thud', { pitch: 120, to: 50, gain: 0.3 });
-    add(LAND + 0.5, 'bounce', 'tok', { pitch: 'D5', gain: 0.14 });
-    add(LAND + 0.8, 'bounce small', 'tok', { pitch: 'F#5', gain: 0.08 });
-    add(10.4, 'decides', 'blip', { pitch: 'A5', gain: 0.12 });
-    add(JUMP, 'jump', 'boing', { gain: 0.16 });
-    add(JUMP + 0.62, 'lands', 'thud', { pitch: 140, to: 70, gain: 0.18 });
-    add(CATCH, 'catch', 'pop', { pitch: 'A5', gain: 0.22 });
-    add(13.3, 'spin', 'whoosh', { len: 0.5, from: 600, to: 2400, gain: 0.12 });
-    add(13.4, 'cheer', 'bell', { pitch: 'D6', gain: 0.18 });
+    [0, 0.42, 0.84].forEach((d, i) => add(0.5 + d, `bell ${i + 1}`, 'bell', { pitch: i % 2 ? 'A5' : 'D6', gain: 0.22 - i * 0.04 }));
+    add(0.6, 'caption 1', 'blip', { pitch: 'A5', gain: 0.06 });
+    add(1.9, 'caption 2', 'blip', { pitch: 'D6', gain: 0.06 });
+    add(T_DOOR, 'doors burst open', 'whoosh', { len: 0.4, from: 300, to: 1800, gain: 0.13 });
+    Object.entries(SPOT).forEach(([k, s], i) => add(s[2] + 0.4, `${k} lands`, 'pop', { pitch: ['D5', 'F#5', 'A5', 'B5', 'D6', 'E6', 'F#6'][i], gain: 0.07 }));
+    passes.filter((p) => p.c < 7.6).forEach((p, i) => add(p.c, `catch ${i + 1}`, 'tok', { pitch: i % 2 ? 'F#5' : 'A5', gain: 0.09 }));
+    add(2.6, 'label', 'blip', { pitch: 'E6', gain: 0.05 });
+    add(STEP_END, 'small step', 'tok', { pitch: 'D5', gain: 0.14 });
+    add(6.9, 'looks up', 'blip', { pitch: 'B5', gain: 0.07 });
     return H.sort((a, b) => a[0] - b[0]);
   }
 

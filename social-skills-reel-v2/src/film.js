@@ -8,7 +8,7 @@
   const PARAMS = new URLSearchParams(location.search);
   const RENDER = PARAMS.get('render') === '1';
   const PREVIEW = PARAMS.get('preview') === '1' || PARAMS.get('play') === '1' || window.AUTOPLAY === true;
-  const DURATION = 15;
+  const DURATION = 37.5;
   const SW = 1080, SH = 1920;
 
   // ------------------------------------------------------------------ palette
@@ -277,7 +277,7 @@
     <g fill="none" stroke="#fff" stroke-width="7" stroke-linejoin="round">
       ${[[370, 1400], [370, 1330], [330, 1260], [410, 1260]].map(([x, y]) => `<rect x="${x}" y="${y}" width="76" height="66" rx="8"/>`).join('')}
     </g>
-    <ellipse cx="640" cy="1390" rx="190" ry="54" fill="none" stroke="#fff" stroke-width="7" opacity=".9"/>
+    <ellipse cx="600" cy="1430" rx="124" ry="42" fill="none" stroke="#fff" stroke-width="7" opacity=".9"/>
     ${[[60, 1300], [1000, 1460], [260, 1470], [700, 1200]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="14" ry="8" fill="${C.grey.l}" ${ol(3)}/>`).join('')}
 
     <!-- foreground flower bed -->
@@ -294,17 +294,21 @@
 
   // ------------------------------------------------------------------ choreography (seconds)
   const DOOR = [540, 1100];
-  const T_DOOR = 3.0;
+  const T_DOOR = 1.35;
   //    spot x, y, leave time, curve bend (px, + to the right of the path)
   const SPOT = {
-    a: [300, 1240, 3.05, -120], g: [690, 1250, 3.2, 110], d: [520, 1330, 3.32, -60], e: [690, 1420, 3.45, 90],
-    b: [190, 1400, 3.58, -150], c: [408, 1440, 3.7, -70], f: [130, 1180, 3.84, -40],
+    a: [300, 1240, 1.4, -120], g: [690, 1250, 1.52, 110], d: [490, 1430, 1.62, -60], e: [710, 1430, 1.74, 90],
+    b: [190, 1400, 1.85, -150], c: [408, 1440, 1.96, -70], f: [130, 1180, 2.08, -40],
   };
   const HERO = [930, 1330];
-  const THROW = 5.05, LAND = 6.1;                    // a throws, the ball sails over g and lands by the boy
+  // a and g play catch: release times, flight 0.85 s (ballistic arc)
+  const PASS0 = 3.45, PASS = 1.2, FLIGHT = 0.85;
+  const passes = Array.from({ length: 30 }, (_, i) => ({ r: PASS0 + i * PASS, c: PASS0 + i * PASS + FLIGHT, from: i % 2 ? 'g' : 'a', to: i % 2 ? 'a' : 'g' }));
+  const LAND = 99;
   const BALL_REST = [868, 1392];
-  const PICK = 11.85, JUMP = 12.05, CATCH = 13.0;    // the boy picks it up, jumps, throws it back to a
-  const CHEER = 13.0;
+  const PICK = 99, JUMP = 99, CATCH = 99, CHEER = 99;
+  const STEP = 5.75, STEP_END = 6.35, STEP_DX = -54;   // the boy's small step toward the game
+  const WIN = [700, 985];                             // where he looks: the round window opens here (scene 3)
 
   const curve = (k) => {
     const [x1, y1, , bend] = SPOT[k];
@@ -391,23 +395,31 @@
     const cheerDelay = { a: 0.15, g: 0, b: 0.25, c: 0.1, d: 0.3, e: 0.2, f: 0.35 }[k];
     const tc = CHEER + cheerDelay;
     const cheering = t > tc;
-    if (k === 'a') {
-      // holds the ball, winds up (anticipation), throws on an arc, follows through, "oops", waves the boy over, catches
-      P.arms = kf(t, [[0, POSE.hold], [THROW - 0.45, POSE.hold], [THROW - 0.05, POSE.back, EZ.anti], [THROW + 0.12, POSE.up, EZ.out], [THROW + 0.55, POSE.open], [LAND + 0.1, POSE.open], [LAND + 0.35, POSE.cheeks, EZ.over], [LAND + 1.4, POSE.cheeks], [LAND + 1.9, POSE.wave], [CATCH - 0.4, POSE.wave], [CATCH - 0.05, POSE.up, EZ.out], [CATCH + 0.25, POSE.hold, EZ.over]]);
-      P.sq = (P.sq || 0) + kf(t, [[0, 0], [THROW - 0.45, 0], [THROW - 0.05, 0.13, EZ.anti], [THROW + 0.1, -0.12, EZ.out], [THROW + 0.45, 0, EZ.io]]);
-      P.lean = (P.lean || 0) + kf(t, [[0, 0], [THROW - 0.45, 0], [THROW - 0.05, -8], [THROW + 0.15, 10, EZ.out], [THROW + 0.6, 0]]);
-      P.mouth = t > LAND && t < LAND + 1.5 ? 'o' : t > THROW - 0.3 && t < THROW + 0.4 ? 'grin' : 'open';
-      P.look = t > THROW && t < CATCH ? lookToward(P, 820, 900) : [3, 0];
-      if (t > LAND + 1.9 && t < CATCH - 0.4) { const w = Math.sin((t - LAND - 1.9) * TAU * 1.4); P.arms = [[-12, 8], [150 + 20 * w, -24 - 20 * w]]; P.mouth = 'open'; }
-    } else if (k === 'g') {
-      // anticipates the catch, jumps for it on an arc, just misses, lands with a squash, laughs it off
-      const jt = 5.82;
-      P.lift = kf(t, [[0, 0], [jt - 0.32, 0], [jt, 70, EZ.up], [jt + 0.34, 0, EZ.in]]);
-      P.sq = (P.sq || 0) + kf(t, [[0, 0], [jt - 0.55, 0], [jt - 0.32, 0.16, EZ.io], [jt - 0.22, -0.14, EZ.out], [jt + 0.3, -0.05], [jt + 0.36, 0.17, EZ.out], [jt + 0.62, 0, EZ.io]]);
-      P.arms = kf(t, [[0, POSE.rest], [THROW, POSE.rest], [jt - 0.3, POSE.open, EZ.io], [jt, POSE.up, EZ.out], [jt + 0.7, POSE.up], [jt + 1.2, POSE.rest]]);
-      P.look = t > THROW ? lookToward(P, t < LAND ? 760 : HERO[0], t < LAND ? 860 : 1150) : [-3, 0];
-      P.mouth = t > jt - 0.4 && t < jt + 0.5 ? 'o' : 'grin';
-      P.hairSw = (P.hairSw || 0) + kf(t, [[0, 0], [jt - 0.3, 0], [jt, -24, EZ.up], [jt + 0.4, 18, EZ.in], [jt + 1.2, 0, EZ.out]]);
+    if (k === 'a' || k === 'g') {
+      // catch: open the arms before the ball arrives, squash on the catch;
+      // throw: wind back (anticipation), release on a stretch, follow through
+      let arms = POSE.hold, sq = 0, lean = 0, mouth = 'open';
+      const other = k === 'a' ? SPOT.g : SPOT.a;
+      const dir = Math.sign(other[0] - P.x);
+      for (const ps of passes) {
+        if (ps.to === k && t > ps.c - 0.55 && t < ps.c + 0.35) {
+          arms = kf(t, [[ps.c - 0.55, POSE.rest], [ps.c - 0.08, POSE.up, EZ.out], [ps.c + 0.3, POSE.hold, EZ.over]]);
+          sq = 0.14 * bump(t, ps.c + 0.04, 0.06); mouth = t < ps.c ? 'o' : 'grin';
+        }
+        if (ps.from === k && t > ps.r - 0.45 && t < ps.r + 0.5) {
+          arms = kf(t, [[ps.r - 0.45, POSE.hold], [ps.r - 0.05, POSE.back, EZ.anti], [ps.r + 0.1, POSE.up, EZ.out], [ps.r + 0.5, POSE.rest, EZ.io]]);
+          sq = kf(t, [[ps.r - 0.45, 0], [ps.r - 0.05, 0.12, EZ.anti], [ps.r + 0.08, -0.12, EZ.out], [ps.r + 0.45, 0, EZ.io]]);
+          lean = kf(t, [[ps.r - 0.45, 0], [ps.r - 0.05, -7 * dir], [ps.r + 0.15, 9 * dir, EZ.out], [ps.r + 0.5, 0]]);
+          mouth = 'grin';
+        }
+        const holding = (ps.to === k && t >= ps.c + 0.35 && t <= ps.r + PASS - 0.45) ;
+        if (holding) { arms = POSE.hold; mouth = 'smile'; }
+        if (ps.from === k && ps.r === PASS0 && t < ps.r - 0.45) arms = POSE.hold;
+      }
+      if (k === 'g' && t < PASS0 + FLIGHT - 0.55) arms = POSE.rest;
+      P.arms = arms; P.sq = (P.sq || 0) + sq; P.lean = (P.lean || 0) + lean; P.mouth = mouth;
+      P.look = [dir * 4 * (P.flip ? -1 : 1), -1.5];
+      P.hairSw = (P.hairSw || 0) - lean * 1.2;
     } else if (k === 'b') {
       // jump rope (rope arcs over the head and under the feet), stops when the ball lands
       const stopAt = reactT + 0.2;
@@ -441,7 +453,7 @@
       if (t > stopAt) { P.lift = 0; P.legs = [[4, 0], [-4, 0]]; P.arms = POSE.rest; P.look = lookToward(P, HERO[0], HERO[1] - 200); P.mouth = 'smile'; }
     } else if (k === 'd' || k === 'e') {
       // tag around the circle; they ease to a stop when the ball lands
-      const CH = [610, 1388, 150, 44];
+      const CH = [600, 1430, 110, 36];
       const tr = travel(k, t);
       const base = Math.atan2((SPOT[k][1] - CH[1]) / CH[3], (SPOT[k][0] - CH[0]) / CH[2]);
       const stopAt = reactT + (k === 'd' ? 0.1 : 0.25);
@@ -496,89 +508,52 @@
     }
   }
 
-  // the boy by the wall: curious, startled by the ball, thinks it over, decides, and joins in
+  // the boy by the wall: curious (never sad), bounces on his toes, takes one small step, looks up at the wall
   function hero(t, ballXY) {
     const P = { x: HERO[0], y: HERO[1], s: depth(HERO[1]) * 1.03, blink: blinkAt(t, 0.31) };
     const breathe = Math.sin(t * TAU * 0.4) * 0.012;
-    P.arms = kf(t, [[0, POSE.straps], [LAND + 0.02, POSE.straps], [LAND + 0.16, [[-34, 30], [34, -30]], EZ.out], [LAND + 0.8, POSE.straps, EZ.io],
-      [7.5, POSE.straps], [8.1, POSE.chin, EZ.io], [10.15, POSE.chin], [10.4, POSE.fists, EZ.over], [11.25, POSE.fists], [PICK, POSE.down, EZ.io],
-      [JUMP - 0.04, POSE.down], [JUMP + 0.14, POSE.up, EZ.out], [JUMP + 0.75, POSE.up], [13.25, POSE.open, EZ.io], [14.2, POSE.open], [14.7, POSE.wave, EZ.io]]);
-    if (t > 14.7) { const w = Math.sin((t - 14.7) * TAU * 1.4); P.arms = [[-118, 26], [150 + 20 * w, -24 - 20 * w]]; }
-    // body: surprise hop at the thud, crouch to pick up the ball (anticipation), big spring jump, land, spin
-    P.lift = kf(t, [[0, 0], [LAND, 0], [LAND + 0.14, 16, EZ.up], [LAND + 0.34, 0, EZ.in], [JUMP, 0], [JUMP + 0.32, 118, EZ.up], [JUMP + 0.62, 0, EZ.in], [13.3, 0], [13.55, 40, EZ.up], [13.8, 0, EZ.in]]);
-    P.sq = breathe + kf(t, [[0, 0], [LAND, 0], [LAND + 0.08, -0.1, EZ.out], [LAND + 0.34, -0.03], [LAND + 0.42, 0.08, EZ.out], [LAND + 0.7, 0, EZ.io],
-      [11.25, 0], [PICK, 0.17, EZ.io], [JUMP - 0.05, 0.22, EZ.io], [JUMP + 0.06, -0.18, EZ.out], [JUMP + 0.3, -0.04, EZ.io], [JUMP + 0.58, -0.1], [JUMP + 0.66, 0.22, EZ.out], [JUMP + 0.95, 0, EZ.io],
-      [13.3, 0], [13.36, 0.08, EZ.out], [13.45, -0.08], [13.8, -0.04], [13.86, 0.12, EZ.out], [14.1, 0, EZ.io]]);
-    // sway while thinking (slow in/out), a quick determined head shake, then a happy spin
-    const sway = 7.6 < t && t < 10.2 ? 5 * Math.sin((t - 7.6) / 2.6 * TAU * 1.5) * Math.sin(Math.PI * prog(t, 7.6, 10.2)) : 0;
-    P.lean = sway + kf(t, [[0, 0], [11.25, 0], [PICK, -6, EZ.io], [JUMP, -8], [JUMP + 0.2, 4, EZ.out], [JUMP + 0.65, 0]]);
-    const shake = 10.35 < t && t < 11.0 ? 9 * Math.sin((t - 10.35) * TAU * 5.5) * (1 - prog(t, 10.35, 11.0)) : 0;
-    P.tilt = shake + sway * 0.8 + kf(t, [[0, -3], [LAND, -3], [LAND + 0.3, 4, EZ.out], [7.5, 4], [8.1, -6], [10.2, -6]]) * (t < 10.2 ? 1 : 0);
-    const spin = EZ.io(prog(t, 13.3, 13.68));
-    P.spinX = Math.cos(spin * TAU);
-    if (Math.abs(P.spinX) < 0.08) P.spinX = 0.08 * Math.sign(P.spinX || 1);
+    const st = prog(t, STEP, STEP_END), stE = EZ.io(st);
+    P.x = HERO[0] + STEP_DX * stE;
+    // anticipation (lean back, settle low) -> the step on an arc -> land with a squash -> follow-through
+    P.lean = kf(t, [[0, 0], [3.6, 0], [4.2, -3, EZ.io], [5.2, -3], [STEP - 0.3, 0], [STEP, 4, EZ.anti], [STEP + 0.3, -6, EZ.io], [STEP_END, -2, EZ.io]]) + wob(t, STEP_END, -5, 2.2, 3.2);
+    P.lift = Math.sin(Math.PI * st) * 10 + kf(t, [[0, 0], [4.85, 0], [4.97, 7, EZ.up], [5.09, 0, EZ.in], [5.21, 6, EZ.up], [5.33, 0, EZ.in]]);
+    P.sq = breathe + kf(t, [[0, 0], [STEP - 0.3, 0], [STEP, 0.07, EZ.anti], [STEP + 0.1, -0.05, EZ.out], [STEP_END - 0.02, 0], [STEP_END + 0.06, 0.08, EZ.out], [STEP_END + 0.35, 0, EZ.io]])
+      + 0.06 * (bump(t, 5.09, 0.04) + bump(t, 5.33, 0.04));
+    // the stepping leg lifts and swings forward; the other stays planted
+    const legLift = Math.sin(Math.PI * st);
+    P.legs = [[-16 * legLift - 4 * stE + 4 * (1 - stE), -42 * legLift], [-4, 0]];
+    P.arms = kf(t, [[0, POSE.straps], [STEP - 0.25, POSE.straps], [STEP + 0.15, [[-16, 22], [18, -30]], EZ.io], [STEP_END + 0.2, POSE.straps, EZ.io]]);
+    P.tilt = kf(t, [[0, -3], [3.6, -3], [4.4, 4, EZ.io], [6.9, 4], [7.35, -7, EZ.io]]) + wob(t, STEP_END, 4, 2.4, 3);
     P.hairSw = -P.lean;
-    // face
-    if (t < LAND) {
+    // face: watches the game, gets excited, then looks up and to the side at the wall
+    if (t < 6.9) {
       P.look = ballXY ? lookToward(P, ballXY[0], ballXY[1]) : [-3, 0];
-      P.mouth = 'smile'; P.brow = 2;
-    } else if (t < 7.5) {
-      P.look = t < LAND + 0.4 ? [0, -1] : [-3, 3.2];
-      P.mouth = t < LAND + 0.7 ? 'o' : 'smile'; P.brow = t < LAND + 0.7 ? 7 : 3;
-      if (t < LAND + 0.5) P.blink = 0;
-    } else if (t < 10.25) {
-      P.look = [2.5 * Math.sin((t - 7.5) * 1.6), -3];
-      P.mouth = 'smile'; P.brow = 6;
-    } else if (t < 11.3) {
-      P.look = [0, 0]; P.mouth = t < 10.7 ? 'smile' : 'grin'; P.browAng = t < 10.7 ? 3 : 0; P.brow = t < 10.7 ? 0 : 4;
-    } else if (t < JUMP) {
-      P.look = [-2.5, 3.5]; P.mouth = 'grin';
+      P.mouth = t > 4.8 && t < 5.4 ? 'grin' : t > STEP_END ? 'grin' : 'smile';
+      P.brow = t > 4.6 ? 4 : 2;
     } else {
-      P.look = ballXY && t < CATCH ? lookToward(P, ballXY[0], ballXY[1]) : [-3, 0];
-      P.mouth = 'grin'; P.brow = 3;
+      P.look = lookToward(P, WIN[0], WIN[1]);
+      P.mouth = 'smile'; P.brow = 6;
+      if (t < 7.05) P.blink = Math.sin(Math.PI * prog(t, 6.9, 7.05));
     }
     return P;
   }
 
   // ------------------------------------------------------------------ the ball (ballistic arcs, squash on contact)
-  function ball(t, pose, heroP) {
-    const a = pose.a;
+  function ball(t, pose) {
+    const a = pose.a, g = pose.g;
     if (!a) return null;
-    const handA = () => { const l = handWorld(a, -1), r = handWorld(a, 1); return [(l[0] + r[0]) / 2, (l[1] + r[1]) / 2 - 6]; };
-    if (t < THROW) return { p: handA(), sq: 0, rot: 0 };
-    const B0 = [318, 1020];
-    const G = (p, q, f, H) => [lerp(p[0], q[0], f), lerp(p[1], q[1], f) - H * 4 * f * (1 - f)];
-    if (t < LAND) {
-      const f = prog(t, THROW, LAND);
-      return { p: G(B0, [820, BALL_REST[1]], f, 640), sq: -0.12 * Math.sin(Math.PI * f) * 0.5, rot: f * 540 };
-    }
-    // bounces lose energy: each shorter and lower, squash at every contact
-    const B = [[LAND, 820, 0.5, 74], [LAND + 0.5, 850, 0.3, 24]];
-    for (const [tb, xb, d, h] of B) {
-      if (t < tb + d) {
-        const f = prog(t, tb, tb + d);
-        const x0 = xb, x1 = xb === 820 ? 850 : BALL_REST[0] - 6;
-        const contact = Math.max(bump(t, tb, 0.035), bump(t, tb + d, 0.035) * 0.5);
-        return { p: G([x0, BALL_REST[1]], [x1, BALL_REST[1]], f, h), sq: 0.32 * contact * (h / 74), rot: 540 + (t - LAND) * 400 };
+    const holdAt = (P) => { const l = handWorld(P, -1), r = handWorld(P, 1); return [(l[0] + r[0]) / 2, (l[1] + r[1]) / 2 - 6]; };
+    if (t < PASS0 || !g) return { p: holdAt(a), sq: 0, rot: 0 };
+    for (const ps of passes) {
+      if (t >= ps.r && t < ps.c) {
+        const f = prog(t, ps.r, ps.c);
+        const p0 = holdAt(pose[ps.from]), p1 = holdAt(pose[ps.to]);
+        const p = [lerp(p0[0], p1[0], f), lerp(p0[1], p1[1], f) - 230 * 4 * f * (1 - f)];
+        return { p, sq: -0.1 * Math.sin(Math.PI * f), rot: (ps.from === 'a' ? 1 : -1) * f * 400 };
       }
+      if (t >= ps.c && t < ps.r + PASS) return { p: holdAt(pose[ps.to]), sq: 0.28 * bump(t, ps.c, 0.05), rot: 0 };
     }
-    if (t < PICK + 0.12) {
-      const f = EZ.out(prog(t, LAND + 0.8, LAND + 2.0));
-      return { p: [lerp(BALL_REST[0] - 6, BALL_REST[0], f), BALL_REST[1]], sq: 0, rot: 700 + f * 40 };
-    }
-    const handH = () => { const l = handWorld(heroP, -1), r = handWorld(heroP, 1); return [(l[0] + r[0]) / 2, (l[1] + r[1]) / 2 - 8]; };
-    if (t < JUMP + 0.14) {
-      const f = EZ.io(prog(t, PICK, PICK + 0.12));
-      const hh = handH();
-      return { p: [lerp(BALL_REST[0], hh[0], f), lerp(BALL_REST[1], hh[1], f)], sq: 0, rot: 740 };
-    }
-    if (t < CATCH) {
-      const f = prog(t, JUMP + 0.14, CATCH);
-      const from = handH(), to = handA();
-      const start = [HERO[0] - 8, HERO[1] - 420];
-      return { p: G(start, to, f, 300), sq: -0.1 * Math.sin(Math.PI * f), rot: 740 - f * 720 };
-    }
-    return { p: handA(), sq: 0.25 * bump(t, CATCH, 0.05), rot: 20 };
+    return null;
   }
 
   // ------------------------------------------------------------------ DOM
@@ -605,7 +580,7 @@
     <div id="ui">
       <div class="tl cap1" id="c1" style="top:262px">${mw('הצלצול להפסקה.')}</div>
       <div class="tl cap2" id="c2" style="top:384px">${mw('הרגע הכי ארוך ביום שלו.')}</div>
-      <div class="lab" id="lab1">כולם יוצאים לשחק</div>
+      <div class="lab" id="lab1">הפסקה</div>
       <div class="lab" id="lab2">צעד קטן</div>
     </div>
     <div id="grain"></div>`;
@@ -617,10 +592,8 @@
   // ------------------------------------------------------------------ camera (keyframed, slow in / slow out)
   function camera(t) {
     // [scale, focus x, focus y]: the focus point lands at screen (540, 1000).
-    // Establish, push in close on the boy while he decides, pull back out for the payoff.
-    const k = kf(t, [[0, [1.0, 540, 1000]], [6.5, [1.035, 545, 1010], EZ.io], [9.0, [1.55, 880, 1180], EZ.io], [11.7, [1.6, 885, 1190], EZ.io], [13.1, [1.03, 560, 1010], EZ.io], [15, [1.05, 560, 1010], EZ.io]]);
-    const dip = wob(t, LAND, 10, 7, 9) + wob(t, JUMP + 0.62, 9, 7, 10);
-    return { s: k[0], fx: k[1], fy: k[2], dy: dip };
+    const k = kf(t, [[0, [1.0, 540, 1000]], [4.4, [1.035, 545, 1005], EZ.io], [6.3, [1.5, 860, 1170], EZ.io], [7.6, [1.56, 835, 1150], EZ.io]]);
+    return { s: k[0], fx: k[1], fy: k[2], dy: 0 };
   }
   const toScreen = (cam, x, y) => [540 + (x - cam.fx) * cam.s, 1000 + (y - cam.fy) * cam.s + cam.dy];
 
@@ -653,8 +626,8 @@
     $('rays').setAttribute('transform', `rotate(${f1(t * 10)})`);
 
     // bell: a small pull back (anticipation), then a ring that swings on an arc and dies away
-    const ringT = 0.9;
-    const pre = kf(t, [[0, 0], [0.45, 0], [ringT - 0.05, -10, EZ.anti], [ringT, 0, EZ.in]]);
+    const ringT = 0.5;
+    const pre = kf(t, [[0, 0], [0.12, 0], [ringT - 0.05, -10, EZ.anti], [ringT, 0, EZ.in]]);
     const swing = t > ringT ? 28 * Math.exp(-(t - ringT) * 1.1) * Math.sin((t - ringT) * TAU * 2.4) : 0;
     bell.setAttribute('transform', `translate(540,568) rotate(${f2(pre + swing)})`);
     clapper.setAttribute('transform', `rotate(${f2(t > ringT ? -0.6 * swing * Math.cos((t - ringT) * 3) : 0)})`);
@@ -674,7 +647,7 @@
     });
 
     // doors: rattle as the kids push (anticipation), then burst open with overshoot
-    const rattle = t > 2.1 && t < T_DOOR ? Math.sin(t * TAU * 9) * 0.03 * prog(t, 2.1, T_DOOR) : 0;
+    const rattle = t > 0.85 && t < T_DOOR ? Math.sin(t * TAU * 9) * 0.03 * prog(t, 0.85, T_DOOR) : 0;
     const open = sp(t, T_DOOR, SPR.door);
     const ds = clamp(1 - 0.86 * open + rattle, 0.06, 1.05);
     $('doorL').setAttribute('transform', `translate(478,0) scale(${f3(ds)},1) translate(-478,0)`);
@@ -682,11 +655,10 @@
 
     // kids, the boy, the ball
     const { out, pose } = yardKids(t);
-    const preBall = pose.a && t < PICK ? ball(t, pose, null) : null;
+    const preBall = ball(t, pose);
     const heroP = hero(t, preBall ? preBall.p : null);
     out.push(['hero', heroP]);
-    const B = ball(t, pose, heroP);
-    if (B && t > JUMP + 0.14 && t < CATCH) heroP.look = lookToward(heroP, B.p[0], B.p[1]);
+    const B = preBall;
     out.sort((p, q) => p[1].y - q[1].y);
     kidsG.innerHTML = out.map(([k, P]) => (P.back ? `<g transform="translate(${f1(P.x)},${f1(P.y)}) scale(${f3((P.flip ? -1 : 1) * P.s)},${f3(P.s)})"><g transform="scale(${f3(1 + (P.sq || 0) * 0.6)},${f3(1 - (P.sq || 0))}) translate(0,${f1(-(P.lift || 0))})">${P.back}</g></g>` : '') + kid(k, KIDS[k], P)).join('');
     ballG.style.display = B ? '' : 'none';
@@ -711,11 +683,11 @@
     dustG.innerHTML = puffs.join('');
 
     // captions (the hook), then they clear the frame for the push-in
-    words($('c1'), t, 1.15);
-    words($('c2'), t, 2.6);
-    $('ui').querySelectorAll('.tl').forEach((n) => { n.style.opacity = f2(1 - EZ.io(prog(t, 6.7, 7.2))); });
+    words($('c1'), t, 0.6);
+    words($('c2'), t, 1.9);
+    $('ui').querySelectorAll('.tl').forEach((n) => { n.style.opacity = f2(1 - EZ.io(prog(t, 4.9, 5.4))); });
 
-    leaders.innerHTML = label('lab1', t, 3.3, 5.5, [540, 1040], [96, 520], cam) + label('lab2', t, JUMP + 0.1, 14.7, [HERO[0], HERO[1] - 300], [560, 300], cam);
+    leaders.innerHTML = label('lab1', t, 2.6, 4.45, [610, 1310], [96, 520], cam) + label('lab2', t, STEP + 0.05, 7.55, [HERO[0] + STEP_DX - 10, HERO[1] + 4], [650, 1290], cam);
   }
 
   // ------------------------------------------------------------------ sound on picture
@@ -724,21 +696,15 @@
     const u = (s) => (s - OFF) / P;
     const H = [];
     const add = (s, label, sfx, o) => H.push([u(s), label, sfx, o]);
-    [0, 0.42, 0.84].forEach((d, i) => add(0.9 + d, `bell ${i + 1}`, 'bell', { pitch: i % 2 ? 'A5' : 'D6', gain: 0.26 - i * 0.04 }));
-    add(1.15, 'caption 1', 'blip', { pitch: 'A5', gain: 0.08 });
-    add(2.6, 'caption 2', 'blip', { pitch: 'D6', gain: 0.08 });
-    add(T_DOOR, 'doors burst open', 'whoosh', { len: 0.45, from: 300, to: 1800, gain: 0.16 });
-    Object.entries(SPOT).forEach(([k, s], i) => add(s[2] + 0.4, `${k} lands`, 'pop', { pitch: ['D5', 'F#5', 'A5', 'B5', 'D6', 'E6', 'F#6'][i], gain: 0.1 }));
-    add(THROW, 'throw', 'whoosh', { len: 0.5, from: 500, to: 2200, gain: 0.14 });
-    add(LAND, 'thud', 'thud', { pitch: 120, to: 50, gain: 0.3 });
-    add(LAND + 0.5, 'bounce', 'tok', { pitch: 'D5', gain: 0.14 });
-    add(LAND + 0.8, 'bounce small', 'tok', { pitch: 'F#5', gain: 0.08 });
-    add(10.4, 'decides', 'blip', { pitch: 'A5', gain: 0.12 });
-    add(JUMP, 'jump', 'boing', { gain: 0.16 });
-    add(JUMP + 0.62, 'lands', 'thud', { pitch: 140, to: 70, gain: 0.18 });
-    add(CATCH, 'catch', 'pop', { pitch: 'A5', gain: 0.22 });
-    add(13.3, 'spin', 'whoosh', { len: 0.5, from: 600, to: 2400, gain: 0.12 });
-    add(13.4, 'cheer', 'bell', { pitch: 'D6', gain: 0.18 });
+    [0, 0.42, 0.84].forEach((d, i) => add(0.5 + d, `bell ${i + 1}`, 'bell', { pitch: i % 2 ? 'A5' : 'D6', gain: 0.22 - i * 0.04 }));
+    add(0.6, 'caption 1', 'blip', { pitch: 'A5', gain: 0.06 });
+    add(1.9, 'caption 2', 'blip', { pitch: 'D6', gain: 0.06 });
+    add(T_DOOR, 'doors burst open', 'whoosh', { len: 0.4, from: 300, to: 1800, gain: 0.13 });
+    Object.entries(SPOT).forEach(([k, s], i) => add(s[2] + 0.4, `${k} lands`, 'pop', { pitch: ['D5', 'F#5', 'A5', 'B5', 'D6', 'E6', 'F#6'][i], gain: 0.07 }));
+    passes.filter((p) => p.c < 7.6).forEach((p, i) => add(p.c, `catch ${i + 1}`, 'tok', { pitch: i % 2 ? 'F#5' : 'A5', gain: 0.09 }));
+    add(2.6, 'label', 'blip', { pitch: 'E6', gain: 0.05 });
+    add(STEP_END, 'small step', 'tok', { pitch: 'D5', gain: 0.14 });
+    add(6.9, 'looks up', 'blip', { pitch: 'B5', gain: 0.07 });
     return H.sort((a, b) => a[0] - b[0]);
   }
 
