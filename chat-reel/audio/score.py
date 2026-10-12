@@ -29,10 +29,10 @@ import dsp  # noqa: E402
 from dsp import SR, Bus, hz, kick, clap, hat, crash, riser, sub_drop, bass_note, ks_pluck, measure_beats, pad_chord, reverb, filt, tvec  # noqa: E402
 
 FILM = Path(__file__).resolve().parent.parent
-DUR = 43.5
+DUR = 52.5
 BPM = 96.0
 BEAT = 60 / BPM
-N_BEATS = 70
+N_BEATS = 84
 dsp.seed(4207)
 
 CH = {
@@ -125,10 +125,10 @@ drums.add(sub_drop(1.0, 70, 32), 36, 0.4)
 drums.add(crash(1.8), 36, 0.09)
 PROG = ["D", "G", "Bm", "A", "D", "G", "Em", "A7"]
 kicks = []
-for i in range(8):
+for i in range(11):
     b0 = 36 + i * 4
     ch = PROG[i % 8]
-    peak = i >= 6                      # the dates: fullest
+    peak = i >= 9                      # the dates: fullest
     lift = i >= 4                      # second half: more hats, the hook louder
     # drums: kick on 1 and 3 (+ a pickup), claps on 2 and 4, 16th shaker, open hat on the last off-beat
     for k in (0, 2):
@@ -152,22 +152,22 @@ for i in range(8):
         bass.add(pizz(nt, ln * BEAT * 1.4), b0 + off, g)
         bass.add(bass_note(nt, ln * BEAT, 380), b0 + off, g * 0.35)
     pad.add(pad_chord([dsp.note_name(dsp.midi(n) - 12) for n in CH[ch][:3]], 4 * BEAT + 0.3, 1100, attack=0.15, release=0.4, voices=3, detune=0.06), b0, 0.08)
-for rep, base in enumerate((36, 52)):
+for rep, base in enumerate((36, 52, 68)):
     for off, nt in HOOK:
         mel.add(glock(nt), base + off, 0.14 + 0.03 * rep, pan=0.2)
 for off, nt in HOOK[:6]:
-    mel.add(glock(dsp.note_name(dsp.midi(nt) + 12), 0.9), 60 + off, 0.08, pan=-0.2)
+    mel.add(glock(dsp.note_name(dsp.midi(nt) + 12), 0.9), 76 + off, 0.08, pan=-0.2)
 music_riser2 = riser(0.9) * 0.4
-mel.add(music_riser2, 66.5, 0.08)
+mel.add(music_riser2, 78.5, 0.08)
 
-# ---- the end (beat 67 = 41.9 s): the beat stops, D rings out under the logo
-strum.add(uke("D", True, 3.0, 0.5), 67, 0.62)
-bass.add(pizz("D2", 2.5), 67, 0.5)
-drums.add(kick(soft=True), 67, 0.7)
-drums.add(crash(2.2), 67, 0.07)
-pad.add(pad_chord(["D3", "A3", "D4", "F#4"], 2.4, (1600, 600), attack=0.03, release=1.2, voices=4, detune=0.07), 67, 0.15)
-mel.add(glock("D6", 2.0), 67, 0.18)
-mel.add(glock("A6", 2.0), 67.5, 0.1)
+# ---- the end (beat 80 = 50.0 s): the beat stops, D rings out under the logo
+strum.add(uke("D", True, 3.0, 0.5), 80, 0.62)
+bass.add(pizz("D2", 2.5), 80, 0.5)
+drums.add(kick(soft=True), 80, 0.7)
+drums.add(crash(2.2), 80, 0.07)
+pad.add(pad_chord(["D3", "A3", "D4", "F#4"], 2.4, (1600, 600), attack=0.03, release=1.2, voices=4, detune=0.07), 80, 0.15)
+mel.add(glock("D6", 2.0), 80, 0.18)
+mel.add(glock("A6", 2.0), 80.5, 0.1)
 
 N = strum.n
 from dsp import sidechain
@@ -184,7 +184,7 @@ for b in range(N_BEATS):
 grid = measure_beats(guide.x[:, :N].mean(axis=0).astype(np.float32), SR, BPM, n_beats=N_BEATS + 1)
 grid["beats"] = [b for b in grid["beats"] if b < DUR + 0.5]
 grid["downbeats"] = grid["beats"][::4]
-grid["sections"] = [{"name": "chat", "beat": 0}, {"name": "out", "beat": 32}, {"name": "explain", "beat": 36}, {"name": "end", "beat": 67}]
+grid["sections"] = [{"name": "chat", "beat": 0}, {"name": "out", "beat": 32}, {"name": "explain", "beat": 36}, {"name": "end", "beat": 80}]
 grid["duration"] = DUR
 grid["source"] = "chat-reel score: plucked arpeggios -> drop into a rhythmic ukulele/drums groove, D major 96 bpm"
 sf.write(FILM / "audio" / "music.wav", mix.T, SR, subtype="PCM_24")

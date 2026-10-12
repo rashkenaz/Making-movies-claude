@@ -117,7 +117,7 @@ svg.i { width: 1em; height: 1em; flex: none; stroke: currentColor; fill: none; s
 <body>
 <div id="stage"></div>
 <script>
-const GRID = {"period":0.625004,"offset":0.00088,"bpm":95.999};
+const GRID = {"period":0.624999,"offset":0.00112,"bpm":96};
 const ICONS = {"puzzle":"<path d=\"M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z\" />","drama":"<path d=\"M10 11h.01\" /> <path d=\"M14 6h.01\" /> <path d=\"M18 6h.01\" /> <path d=\"M6.5 13.1h.01\" /> <path d=\"M22 5c0 9-4 12-6 12s-6-3-6-12c0-2 2-3 6-3s6 1 6 3\" /> <path d=\"M17.4 9.9c-.8.8-2 .8-2.8 0\" /> <path d=\"M10.1 7.1C9 7.2 7.7 7.7 6 8.6c-3.5 2-4.7 3.9-3.7 5.6 4.5 7.8 9.5 8.4 11.2 7.4.9-.5 1.9-2.1 1.9-4.7\" /> <path d=\"M9.1 16.5c.3-1.1 1.4-1.7 2.4-1.4\" />","messages-square":"<path d=\"M16 10a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 14.286V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z\" /> <path d=\"M20 9a2 2 0 0 1 2 2v10.286a.71.71 0 0 1-1.212.502l-2.202-2.202A2 2 0 0 0 17.172 19H10a2 2 0 0 1-2-2v-1\" />","heart-handshake":"<path d=\"M19.414 14.414C21 12.828 22 11.5 22 9.5a5.5 5.5 0 0 0-9.591-3.676.6.6 0 0 1-.818.001A5.5 5.5 0 0 0 2 9.5c0 2.3 1.5 4 3 5.5l5.535 5.362a2 2 0 0 0 2.879.052 2.12 2.12 0 0 0-.004-3 2.124 2.124 0 1 0 3-3 2.124 2.124 0 0 0 3.004 0 2 2 0 0 0 0-2.828l-1.881-1.882a2.41 2.41 0 0 0-3.409 0l-1.71 1.71a2 2 0 0 1-2.828 0 2 2 0 0 1 0-2.828l2.823-2.762\" />","school":"<path d=\"M14 21v-3a2 2 0 0 0-4 0v3\" /> <path d=\"M18 4.933V21\" /> <path d=\"m4 6 7.106-3.79a2 2 0 0 1 1.788 0L20 6\" /> <path d=\"m6 11-3.52 2.147a1 1 0 0 0-.48.854V19a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a1 1 0 0 0-.48-.853L18 11\" /> <path d=\"M6 4.933V21\" /> <circle cx=\"12\" cy=\"9\" r=\"2\" />","users":"<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" /> <path d=\"M16 3.128a4 4 0 0 1 0 7.744\" /> <path d=\"M22 21v-2a4 4 0 0 0-3-3.87\" /> <circle cx=\"9\" cy=\"7\" r=\"4\" />","calendar-days":"<path d=\"M8 2v3\" /> <path d=\"M16 2v3\" /> <rect x=\"3\" y=\"3\" width=\"18\" height=\"18\" rx=\"2\" /> <path d=\"M3 9h18\" /> <path d=\"M8 13h.01\" /> <path d=\"M12 13h.01\" /> <path d=\"M16 13h.01\" /> <path d=\"M8 17h.01\" /> <path d=\"M12 17h.01\" /> <path d=\"M16 17h.01\" />","map-pin":"<path d=\"M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0\" /> <circle cx=\"12\" cy=\"10\" r=\"3\" />","chevron-left":"<path d=\"m15 18-6-6 6-6\" />","send-horizontal":"<path d=\"M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z\" /> <path d=\"M6 12h16\" />","arrow-up":"<path d=\"m5 12 7-7 7 7\" /> <path d=\"M12 19V5\" />","phone":"<path d=\"M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384\" />","list":"<path d=\"M3 5h.01\" /> <path d=\"M3 12h.01\" /> <path d=\"M3 19h.01\" /> <path d=\"M8 5h13\" /> <path d=\"M8 12h13\" /> <path d=\"M8 19h13\" />","view":"<path d=\"M21 17v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2\" /> <path d=\"M21 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2\" /> <circle cx=\"12\" cy=\"12\" r=\"1\" /> <path d=\"M18.944 12.33a1 1 0 0 0 0-.66 7.5 7.5 0 0 0-13.888 0 1 1 0 0 0 0 .66 7.5 7.5 0 0 0 13.888 0\" />","send":"<path d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\" /> <path d=\"m21.854 2.147-10.94 10.939\" />","expand":"<path d=\"m15 15 6 6\" /> <path d=\"m15 9 6-6\" /> <path d=\"M21 16v5h-5\" /> <path d=\"M21 8V3h-5\" /> <path d=\"M3 16v5h5\" /> <path d=\"m3 21 6-6\" /> <path d=\"M3 8V3h5\" /> <path d=\"M9 9 3 3\" />","bell":"<path d=\"M10.268 21a2 2 0 0 0 3.464 0\" /> <path d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\" />"};
 </script>
 <script>
@@ -131,7 +131,7 @@ const ICONS = {"puzzle":"<path d=\"M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1
   const PARAMS = new URLSearchParams(location.search);
   const RENDER = PARAMS.get('render') === '1';
   const PREVIEW = PARAMS.get('preview') === '1' || window.AUTOPLAY === true;
-  const DURATION = 43.5;
+  const DURATION = 52.5;
   const SW = 1080, SH = 1920;
 
   // ------------------------------------------------------------------ math
@@ -179,13 +179,13 @@ const ICONS = {"puzzle":"<path d=\"M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1
   ];
   const TAP = 19.85, EXP0 = 20.1, EXP1 = 21.45;
   // part B (out of the phone): scene windows in seconds, items land on the beat grid (0.625 s)
-  const B0 = 22.5, END0 = 41.85;
-  const SC = { s1: [22.85, 25.3], s2: [25.3, 29.5], s3: [29.5, 32.7], s4: [32.7, 35.7], s5: [35.7, 39.7], s6: [39.7, END0] };
+  const B0 = 22.5, END0 = 50.0;
+  const SC = { s1: [22.85, 25.9], s2: [25.9, 31.6], s3: [31.6, 36.6], s4: [36.6, 41.0], s5: [41.0, 46.6], s6: [46.6, END0] };
   const FOR = ['דימוי וביטחון עצמי', 'יכולת ליזום ולהשתלב חברתית', 'חרדה חברתית או ביישנות', 'הבנה וניתוח של מצבים חברתיים', 'תסכול וקושי בניהול קונפליקטים', 'גמישות מחשבתית וחשיבה חיובית'];
   const DO = [['puzzle', 'משחקים ופעילויות'], ['drama', 'משחקי תפקידים וסימולציות'], ['messages-square', 'שיח במרחב בטוח'], ['heart-handshake', 'הדרכת הורים']];
   const INFO = [['school', 'כיתות א׳–ו׳', 'שלוש קבוצות גיל'], ['users', 'עד 8 ילדים', 'בכל קבוצה'], ['calendar-days', 'ימי רביעי', 'אחר הצהריים'], ['map-pin', 'קריית אתא', 'שלום עליכם 5']];
   const BUB = ['#FDE3D8', '#E2F1FB', '#E8F4E0', '#FFF6C4', '#FDE3D8', '#E2F1FB'];
-  const T_FOR = (i) => 25.65 + i * 0.3125, T_DO = (i) => 29.85 + i * 0.3125, T_INFO = (i) => 33.0 + i * 0.3125;
+  const T_FOR = (i) => 26.25 + i * 0.625, T_DO = (i) => 31.9 + i * 0.625, T_INFO = (i) => 36.9 + i * 0.625;
   const CLOCK = ['16:41', '16:41', '16:42', '16:42', '16:43', '16:43', '16:44', '16:44', '16:44'];
 
   // ------------------------------------------------------------------ DOM
@@ -405,36 +405,36 @@ const ICONS = {"puzzle":"<path d=\"M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1
       let n;
       if ((n = sceneK('s1'))) { rise(n.querySelector('.bl1'), 22.95); rise(n.querySelector('.bl2'), 23.9); }
       if ((n = sceneK('s2'))) {
-        rise(n.querySelector('.hd'), 25.3);
+        rise(n.querySelector('.hd'), 25.9);
         FOR.forEach((_, i) => { const b = $(`for${i}`); b.style.transformOrigin = i % 2 ? '0% 100%' : '100% 100%'; pop(b, T_FOR(i), { dy: 30, s0: 0.6 }); });
       }
       if ((n = sceneK('s3'))) {
-        rise(n.querySelector('.hd'), 29.5);
+        rise(n.querySelector('.hd'), 31.6);
         DO.forEach((_, i) => {
           const k = sp(t, T_DO(i), { stiffness: 220, damping: 16 });
           const c = $(`do${i}`);
           c.style.opacity = f2(clamp(k * 2.5));
           c.style.transform = `perspective(1200px) rotateY(${f1((1 - k) * 90)}deg) scale(${f3(0.85 + 0.15 * k)})`;
         });
-        pop($('doNote'), 31.3, { dy: 30, s0: 0.95 });
+        pop($('doNote'), 34.4, { dy: 30, s0: 0.95 });
       }
       if ((n = sceneK('s4'))) {
-        rise(n.querySelector('.hd'), 32.7);
+        rise(n.querySelector('.hd'), 36.6);
         INFO.forEach((_, i) => pop($(`info${i}`), T_INFO(i), { dy: 70, s0: 0.75 }));
       }
       if ((n = sceneK('s5'))) {
-        pop($('sgPhoto'), 35.85, { dy: 40, s0: 0.55, base: 'translateX(-50%)' });
-        pop($('sgK'), 36.25, { dy: 30, s0: 0.95 });
-        pop($('sgN'), 36.45, { dy: 40, s0: 0.9 });
-        pop($('sgB1'), 36.9, { dy: 30, s0: 0.97, cfg: SPR.ui });
-        pop($('sgB2'), 37.4, { dy: 30, s0: 0.97, cfg: SPR.ui });
+        pop($('sgPhoto'), 41.15, { dy: 40, s0: 0.55, base: 'translateX(-50%)' });
+        pop($('sgK'), 41.5, { dy: 30, s0: 0.95 });
+        pop($('sgN'), 41.7, { dy: 40, s0: 0.9 });
+        pop($('sgB1'), 42.2, { dy: 30, s0: 0.97, cfg: SPR.ui });
+        pop($('sgB2'), 42.9, { dy: 30, s0: 0.97, cfg: SPR.ui });
       }
       if ((n = sceneK('s6'))) {
-        pop($('dK'), 39.85, { dy: 30, s0: 0.95 });
-        pop($('dD'), 40.15, { dy: 80, s0: 0.5, cfg: { stiffness: 300, damping: 15 } });
-        pop($('dR'), 40.6, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
-        pop($('dL'), 40.95, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
-        pop($('dW'), 41.25, { dy: 30, s0: 0.95 });
+        pop($('dK'), 46.75, { dy: 30, s0: 0.95 });
+        pop($('dD'), 47.05, { dy: 80, s0: 0.5, cfg: { stiffness: 300, damping: 15 } });
+        pop($('dR'), 47.6, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
+        pop($('dL'), 48.1, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
+        pop($('dW'), 48.55, { dy: 30, s0: 0.95 });
         $('dL').querySelector('.arw').style.transform = `translateY(${f1(-10 * Math.abs(Math.sin(t * TAU * 0.8)))}px)`;
       }
     }
@@ -463,10 +463,10 @@ const ICONS = {"puzzle":"<path d=\"M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1
     FOR.forEach((_, i) => add(T_FOR(i), `for ${i + 1}`, 'pop', { pitch: ['D5', 'E5', 'F#5', 'A5', 'B5', 'D6'][i], gain: 0.1 }));
     DO.forEach((_, i) => add(T_DO(i), `do ${i + 1}`, 'click', { gain: 0.1 }));
     INFO.forEach((_, i) => add(T_INFO(i), `info ${i + 1}`, 'pop', { pitch: ['F#5', 'A5', 'B5', 'D6'][i], gain: 0.1 }));
-    add(35.85, 'photo', 'pop', { pitch: 'D5', gain: 0.14 });
-    add(40.15, 'date', 'thud', { pitch: 140, to: 60, gain: 0.2 });
-    add(40.6, 'registration', 'pop', { pitch: 'F#5', gain: 0.12 });
-    add(40.95, 'link in bio', 'bell', { pitch: 'A6', gain: 0.12 });
+    add(41.15, 'photo', 'pop', { pitch: 'D5', gain: 0.14 });
+    add(47.05, 'date', 'thud', { pitch: 140, to: 60, gain: 0.2 });
+    add(47.6, 'registration', 'pop', { pitch: 'F#5', gain: 0.12 });
+    add(48.1, 'link in bio', 'bell', { pitch: 'A6', gain: 0.12 });
     add(END0, 'to the logo', 'whoosh', { len: 0.5, from: 500, to: 1800, gain: 0.08 });
     return H.sort((a, b) => a[0] - b[0]);
   }

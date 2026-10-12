@@ -8,7 +8,7 @@
   const PARAMS = new URLSearchParams(location.search);
   const RENDER = PARAMS.get('render') === '1';
   const PREVIEW = PARAMS.get('preview') === '1' || window.AUTOPLAY === true;
-  const DURATION = 43.5;
+  const DURATION = 52.5;
   const SW = 1080, SH = 1920;
 
   // ------------------------------------------------------------------ math
@@ -56,13 +56,13 @@
   ];
   const TAP = 19.85, EXP0 = 20.1, EXP1 = 21.45;
   // part B (out of the phone): scene windows in seconds, items land on the beat grid (0.625 s)
-  const B0 = 22.5, END0 = 41.85;
-  const SC = { s1: [22.85, 25.3], s2: [25.3, 29.5], s3: [29.5, 32.7], s4: [32.7, 35.7], s5: [35.7, 39.7], s6: [39.7, END0] };
+  const B0 = 22.5, END0 = 50.0;
+  const SC = { s1: [22.85, 25.9], s2: [25.9, 31.6], s3: [31.6, 36.6], s4: [36.6, 41.0], s5: [41.0, 46.6], s6: [46.6, END0] };
   const FOR = ['דימוי וביטחון עצמי', 'יכולת ליזום ולהשתלב חברתית', 'חרדה חברתית או ביישנות', 'הבנה וניתוח של מצבים חברתיים', 'תסכול וקושי בניהול קונפליקטים', 'גמישות מחשבתית וחשיבה חיובית'];
   const DO = [['puzzle', 'משחקים ופעילויות'], ['drama', 'משחקי תפקידים וסימולציות'], ['messages-square', 'שיח במרחב בטוח'], ['heart-handshake', 'הדרכת הורים']];
   const INFO = [['school', 'כיתות א׳–ו׳', 'שלוש קבוצות גיל'], ['users', 'עד 8 ילדים', 'בכל קבוצה'], ['calendar-days', 'ימי רביעי', 'אחר הצהריים'], ['map-pin', 'קריית אתא', 'שלום עליכם 5']];
   const BUB = ['#FDE3D8', '#E2F1FB', '#E8F4E0', '#FFF6C4', '#FDE3D8', '#E2F1FB'];
-  const T_FOR = (i) => 25.65 + i * 0.3125, T_DO = (i) => 29.85 + i * 0.3125, T_INFO = (i) => 33.0 + i * 0.3125;
+  const T_FOR = (i) => 26.25 + i * 0.625, T_DO = (i) => 31.9 + i * 0.625, T_INFO = (i) => 36.9 + i * 0.625;
   const CLOCK = ['16:41', '16:41', '16:42', '16:42', '16:43', '16:43', '16:44', '16:44', '16:44'];
 
   // ------------------------------------------------------------------ DOM
@@ -282,36 +282,36 @@
       let n;
       if ((n = sceneK('s1'))) { rise(n.querySelector('.bl1'), 22.95); rise(n.querySelector('.bl2'), 23.9); }
       if ((n = sceneK('s2'))) {
-        rise(n.querySelector('.hd'), 25.3);
+        rise(n.querySelector('.hd'), 25.9);
         FOR.forEach((_, i) => { const b = $(`for${i}`); b.style.transformOrigin = i % 2 ? '0% 100%' : '100% 100%'; pop(b, T_FOR(i), { dy: 30, s0: 0.6 }); });
       }
       if ((n = sceneK('s3'))) {
-        rise(n.querySelector('.hd'), 29.5);
+        rise(n.querySelector('.hd'), 31.6);
         DO.forEach((_, i) => {
           const k = sp(t, T_DO(i), { stiffness: 220, damping: 16 });
           const c = $(`do${i}`);
           c.style.opacity = f2(clamp(k * 2.5));
           c.style.transform = `perspective(1200px) rotateY(${f1((1 - k) * 90)}deg) scale(${f3(0.85 + 0.15 * k)})`;
         });
-        pop($('doNote'), 31.3, { dy: 30, s0: 0.95 });
+        pop($('doNote'), 34.4, { dy: 30, s0: 0.95 });
       }
       if ((n = sceneK('s4'))) {
-        rise(n.querySelector('.hd'), 32.7);
+        rise(n.querySelector('.hd'), 36.6);
         INFO.forEach((_, i) => pop($(`info${i}`), T_INFO(i), { dy: 70, s0: 0.75 }));
       }
       if ((n = sceneK('s5'))) {
-        pop($('sgPhoto'), 35.85, { dy: 40, s0: 0.55, base: 'translateX(-50%)' });
-        pop($('sgK'), 36.25, { dy: 30, s0: 0.95 });
-        pop($('sgN'), 36.45, { dy: 40, s0: 0.9 });
-        pop($('sgB1'), 36.9, { dy: 30, s0: 0.97, cfg: SPR.ui });
-        pop($('sgB2'), 37.4, { dy: 30, s0: 0.97, cfg: SPR.ui });
+        pop($('sgPhoto'), 41.15, { dy: 40, s0: 0.55, base: 'translateX(-50%)' });
+        pop($('sgK'), 41.5, { dy: 30, s0: 0.95 });
+        pop($('sgN'), 41.7, { dy: 40, s0: 0.9 });
+        pop($('sgB1'), 42.2, { dy: 30, s0: 0.97, cfg: SPR.ui });
+        pop($('sgB2'), 42.9, { dy: 30, s0: 0.97, cfg: SPR.ui });
       }
       if ((n = sceneK('s6'))) {
-        pop($('dK'), 39.85, { dy: 30, s0: 0.95 });
-        pop($('dD'), 40.15, { dy: 80, s0: 0.5, cfg: { stiffness: 300, damping: 15 } });
-        pop($('dR'), 40.6, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
-        pop($('dL'), 40.95, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
-        pop($('dW'), 41.25, { dy: 30, s0: 0.95 });
+        pop($('dK'), 46.75, { dy: 30, s0: 0.95 });
+        pop($('dD'), 47.05, { dy: 80, s0: 0.5, cfg: { stiffness: 300, damping: 15 } });
+        pop($('dR'), 47.6, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
+        pop($('dL'), 48.1, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
+        pop($('dW'), 48.55, { dy: 30, s0: 0.95 });
         $('dL').querySelector('.arw').style.transform = `translateY(${f1(-10 * Math.abs(Math.sin(t * TAU * 0.8)))}px)`;
       }
     }
@@ -340,10 +340,10 @@
     FOR.forEach((_, i) => add(T_FOR(i), `for ${i + 1}`, 'pop', { pitch: ['D5', 'E5', 'F#5', 'A5', 'B5', 'D6'][i], gain: 0.1 }));
     DO.forEach((_, i) => add(T_DO(i), `do ${i + 1}`, 'click', { gain: 0.1 }));
     INFO.forEach((_, i) => add(T_INFO(i), `info ${i + 1}`, 'pop', { pitch: ['F#5', 'A5', 'B5', 'D6'][i], gain: 0.1 }));
-    add(35.85, 'photo', 'pop', { pitch: 'D5', gain: 0.14 });
-    add(40.15, 'date', 'thud', { pitch: 140, to: 60, gain: 0.2 });
-    add(40.6, 'registration', 'pop', { pitch: 'F#5', gain: 0.12 });
-    add(40.95, 'link in bio', 'bell', { pitch: 'A6', gain: 0.12 });
+    add(41.15, 'photo', 'pop', { pitch: 'D5', gain: 0.14 });
+    add(47.05, 'date', 'thud', { pitch: 140, to: 60, gain: 0.2 });
+    add(47.6, 'registration', 'pop', { pitch: 'F#5', gain: 0.12 });
+    add(48.1, 'link in bio', 'bell', { pitch: 'A6', gain: 0.12 });
     add(END0, 'to the logo', 'whoosh', { len: 0.5, from: 500, to: 1800, gain: 0.08 });
     return H.sort((a, b) => a[0] - b[0]);
   }
