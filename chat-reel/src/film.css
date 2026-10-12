@@ -71,6 +71,38 @@ svg.i { width: 1em; height: 1em; flex: none; stroke: currentColor; fill: none; s
 #expand .big { font-size: 120px; color: var(--ink); white-space: nowrap; }
 #expand .sub { font-size: 60px; color: var(--coral-d); white-space: nowrap; }
 
+/* part B */
+#partB { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; z-index: 40; }
+.scene { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+.mask { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 6px 22px; margin-bottom: -22px; }
+.wd { display: inline-block; }
+.wd.k { color: var(--coral-d); }
+.bl, .hd { position: absolute; left: 50px; right: 50px; text-align: center; white-space: nowrap; color: var(--ink); }
+.bl1 { font-size: 100px; } .bl2 { font-size: 74px; }
+.hd { font-size: 80px; }
+.bubs { position: absolute; left: 90px; right: 90px; top: 660px; display: flex; flex-direction: column; gap: 22px; }
+.bub { font-size: 46px; color: var(--ink); padding: 22px 38px 26px; border-radius: 44px; box-shadow: 0 6px 0 rgba(58, 56, 72, .06); white-space: nowrap; }
+.bub.r { align-self: flex-start; border-start-start-radius: 12px; }
+.bub.l { align-self: flex-end; border-start-end-radius: 12px; }
+.tile { position: absolute; width: 430px; height: 290px; border-radius: 40px; background: #fff; box-shadow: 0 16px 40px rgba(58, 56, 72, .08); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 0 22px; }
+.tile .ico { width: 112px; height: 112px; border-radius: 50%; display: grid; place-items: center; font-size: 58px; color: var(--ink); }
+.tile .tt { font-size: 44px; color: var(--ink); line-height: 1.2; }
+.tile .ts { font-size: 34px; color: var(--muted); }
+.note { position: absolute; left: 60px; right: 60px; text-align: center; font-size: 44px; color: var(--coral-d); }
+#sgPhoto { position: absolute; left: 50%; top: 470px; width: 420px; height: 420px; border-radius: 50%; overflow: hidden; box-shadow: 0 22px 60px rgba(58, 56, 72, .18); }
+#sgPhoto img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.04); }
+.sgK, .sgN, .sgB { position: absolute; left: 80px; right: 80px; text-align: center; }
+.sgK { top: 930px; font-size: 42px; color: var(--coral-d); }
+.sgN { top: 990px; font-size: 92px; color: var(--ink); }
+.sgB { font-size: 42px; line-height: 1.45; color: var(--body); text-wrap: balance; }
+#sgB1 { top: 1120px; } #sgB2 { top: 1320px; }
+.dK, .dD, .dW { position: absolute; left: 0; right: 0; text-align: center; color: var(--ink); white-space: nowrap; }
+.dK { font-size: 66px; color: var(--coral-d); }
+.dD { font-size: 260px; letter-spacing: -4px; line-height: 1.1; }
+.dW { font-size: 42px; color: var(--muted); }
+.chip { position: absolute; right: 50%; display: flex; align-items: center; gap: 20px; height: 130px; padding: 0 56px; border-radius: 65px; font-size: 60px; white-space: nowrap; }
+.chip .arw { display: grid; font-size: 56px; }
+
 #harness { position: fixed; left: 0; right: 0; bottom: 0; height: 54px; background: #222; display: flex; align-items: center; gap: 12px; padding: 0 14px; color: #fff; font: 14px monospace; direction: ltr; z-index: 100; }
 #harness input { flex: 1; }
 #harness button { background: #4E4B5D; color: #fff; border: 0; border-radius: 6px; padding: 4px 12px; font-size: 16px; }

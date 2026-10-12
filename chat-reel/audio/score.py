@@ -26,13 +26,13 @@ import soundfile as sf
 
 sys.path.insert(0, os.path.join(os.environ["MOTION_REEL_SKILL"], "scripts"))
 import dsp  # noqa: E402
-from dsp import SR, Bus, hz, kick, ks_pluck, measure_beats, pad_chord, reverb, filt, tvec  # noqa: E402
+from dsp import SR, Bus, hz, kick, clap, hat, crash, riser, sub_drop, bass_note, ks_pluck, measure_beats, pad_chord, reverb, filt, tvec  # noqa: E402
 
 FILM = Path(__file__).resolve().parent.parent
-DUR = 40.0
+DUR = 43.5
 BPM = 96.0
 BEAT = 60 / BPM
-N_BEATS = 64
+N_BEATS = 70
 dsp.seed(4207)
 
 CH = {
@@ -117,34 +117,62 @@ for e in range(16):
 for j, nt in enumerate(["D5", "E5", "F#5", "A5", "B5", "D6", "E6", "F#6", "A6"]):
     mel.add(glock(nt, 0.9), 32 + j * 0.25, 0.07 + 0.012 * j, pan=-0.4 + 0.1 * j)
 
-# ---- the explanation (beats 35-60): bright and warm, strummed, with the hook
+# ---- part B (beats 36-67 = 22.5-41.9 s): the drop, a rhythmic groove that builds to the dates
+drums = Bus(DUR, BPM)
+music_riser = riser(1.25) * 0.5
+mel.add(music_riser, 34, 0.12)
+drums.add(sub_drop(1.0, 70, 32), 36, 0.4)
+drums.add(crash(1.8), 36, 0.09)
 PROG = ["D", "G", "Bm", "A", "D", "G", "Em", "A7"]
-for i, ch in enumerate(PROG[:6]):
+kicks = []
+for i in range(8):
     b0 = 36 + i * 4
-    if b0 >= 60:
-        break
-    bar_strum(b0, ch, 0.75, bright=0.5)
-    bass.add(pizz(ROOT[ch]), b0, 0.45)
-    bass.add(pizz(ROOT[ch]), b0 + 1.5, 0.25)
-    bass.add(pizz(dsp.note_name(dsp.midi(ROOT[ch]) + 7)), b0 + 2, 0.32)
+    ch = PROG[i % 8]
+    peak = i >= 6                      # the dates: fullest
+    lift = i >= 4                      # second half: more hats, the hook louder
+    # drums: kick on 1 and 3 (+ a pickup), claps on 2 and 4, 16th shaker, open hat on the last off-beat
+    for k in (0, 2):
+        drums.add(kick(soft=True), b0 + k, 0.9); kicks.append((b0 + k) * BEAT)
+    drums.add(kick(soft=True), b0 + 3.5 if i % 2 else b0 + 2.75, 0.5)
+    for k in (1, 3):
+        drums.add(clap(tight=True), b0 + k, 0.24 if not peak else 0.3, pan=-0.05)
+    for e in range(16):
+        perc.add(shaker(), b0 + e * 0.25, (0.09 if e % 2 else 0.05) * (1.25 if lift else 1.0), pan=0.3)
+    if lift:
+        for e in range(4):
+            drums.add(hat(), b0 + e + 0.5, 0.05, pan=0.25)
+    drums.add(hat(open_=True), b0 + 3.5, 0.05, pan=0.3)
+    # strum in eighths, bass groove (pizzicato + a soft synth bass under it)
     for e in range(8):
-        perc.add(shaker(), b0 + e * 0.5, 0.1 if e % 2 else 0.055, pan=0.3)
-    perc.add(woodblock(), b0 + 1, 0.06, pan=-0.3)
-    perc.add(woodblock(1050), b0 + 3, 0.05, pan=-0.3)
-for off, nt in HOOK:
-    mel.add(glock(nt), 36 + off, 0.13, pan=0.2)
+        strum.add(uke(ch, e % 2 == 0, bright=0.55), b0 + e * 0.5, 0.36 * (1.0 if e % 2 == 0 else 0.7), pan=-0.15)
+    r = ROOT[ch]
+    fifth = dsp.note_name(dsp.midi(r) + 7)
+    octave = dsp.note_name(dsp.midi(r) + 12)
+    for off, nt, ln, g in ((0, r, 0.9, 0.5), (0.75, r, 0.4, 0.3), (1.5, fifth, 0.4, 0.32), (2, r, 0.9, 0.45), (3, octave, 0.4, 0.32), (3.5, fifth, 0.4, 0.28)):
+        bass.add(pizz(nt, ln * BEAT * 1.4), b0 + off, g)
+        bass.add(bass_note(nt, ln * BEAT, 380), b0 + off, g * 0.35)
+    pad.add(pad_chord([dsp.note_name(dsp.midi(n) - 12) for n in CH[ch][:3]], 4 * BEAT + 0.3, 1100, attack=0.15, release=0.4, voices=3, detune=0.06), b0, 0.08)
+for rep, base in enumerate((36, 52)):
+    for off, nt in HOOK:
+        mel.add(glock(nt), base + off, 0.14 + 0.03 * rep, pan=0.2)
 for off, nt in HOOK[:6]:
-    mel.add(glock(nt), 52 + off, 0.12, pan=0.2)
+    mel.add(glock(dsp.note_name(dsp.midi(nt) + 12), 0.9), 60 + off, 0.08, pan=-0.2)
+music_riser2 = riser(0.9) * 0.4
+mel.add(music_riser2, 66.5, 0.08)
 
-# ---- the end (beats 60-64): D rings out under the logo
-strum.add(uke("D", True, 3.2, 0.5), 60, 0.6)
-bass.add(pizz("D2", 2.5), 60, 0.5)
-pad.add(pad_chord(["D3", "A3", "D4", "F#4"], 3.0, (1600, 600), attack=0.05, release=1.4, voices=4, detune=0.07), 60, 0.15)
-mel.add(glock("D6", 2.2), 60, 0.18)
-mel.add(glock("A6", 2.2), 60.5, 0.1)
+# ---- the end (beat 67 = 41.9 s): the beat stops, D rings out under the logo
+strum.add(uke("D", True, 3.0, 0.5), 67, 0.62)
+bass.add(pizz("D2", 2.5), 67, 0.5)
+drums.add(kick(soft=True), 67, 0.7)
+drums.add(crash(2.2), 67, 0.07)
+pad.add(pad_chord(["D3", "A3", "D4", "F#4"], 2.4, (1600, 600), attack=0.03, release=1.2, voices=4, detune=0.07), 67, 0.15)
+mel.add(glock("D6", 2.0), 67, 0.18)
+mel.add(glock("A6", 2.0), 67.5, 0.1)
 
 N = strum.n
-mix = reverb(strum.x, 0.25) + reverb(mel.x, 0.38) + bass.x * 0.9 + perc.x + reverb(pad.x, 0.35)
+from dsp import sidechain
+duck = sidechain(kicks, strum.x.shape[1], 0.18, 0.12)
+mix = reverb(strum.x, 0.25) * duck + reverb(mel.x, 0.38) + bass.x * 0.9 * duck + perc.x + drums.x * 0.85 + reverb(pad.x, 0.35) * duck
 mix = mix[:, :N]
 fade = int(1.0 * SR)
 mix[:, -fade:] *= np.linspace(1, 0, fade) ** 2
@@ -156,9 +184,9 @@ for b in range(N_BEATS):
 grid = measure_beats(guide.x[:, :N].mean(axis=0).astype(np.float32), SR, BPM, n_beats=N_BEATS + 1)
 grid["beats"] = [b for b in grid["beats"] if b < DUR + 0.5]
 grid["downbeats"] = grid["beats"][::4]
-grid["sections"] = [{"name": "chat", "beat": 0}, {"name": "out", "beat": 32}, {"name": "explain", "beat": 36}, {"name": "end", "beat": 60}]
+grid["sections"] = [{"name": "chat", "beat": 0}, {"name": "out", "beat": 32}, {"name": "explain", "beat": 36}, {"name": "end", "beat": 67}]
 grid["duration"] = DUR
-grid["source"] = "chat-reel score: plucked arpeggios -> strummed ukulele + glockenspiel, D major 96 bpm"
+grid["source"] = "chat-reel score: plucked arpeggios -> drop into a rhythmic ukulele/drums groove, D major 96 bpm"
 sf.write(FILM / "audio" / "music.wav", mix.T, SR, subtype="PCM_24")
 (FILM / "beats.json").write_text(json.dumps(grid, indent=1))
 print(grid["source"], f"| {grid['bpm']} bpm, offset {grid['offset'] * 1000:.1f} ms")

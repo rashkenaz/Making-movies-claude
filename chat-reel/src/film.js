@@ -8,7 +8,7 @@
   const PARAMS = new URLSearchParams(location.search);
   const RENDER = PARAMS.get('render') === '1';
   const PREVIEW = PARAMS.get('preview') === '1' || window.AUTOPLAY === true;
-  const DURATION = 40;
+  const DURATION = 43.5;
   const SW = 1080, SH = 1920;
 
   // ------------------------------------------------------------------ math
@@ -55,6 +55,14 @@
     { who: 'in', at: 18.55, type: 18.1, card: true },
   ];
   const TAP = 19.85, EXP0 = 20.1, EXP1 = 21.45;
+  // part B (out of the phone): scene windows in seconds, items land on the beat grid (0.625 s)
+  const B0 = 22.5, END0 = 41.85;
+  const SC = { s1: [22.85, 25.3], s2: [25.3, 29.5], s3: [29.5, 32.7], s4: [32.7, 35.7], s5: [35.7, 39.7], s6: [39.7, END0] };
+  const FOR = ['דימוי וביטחון עצמי', 'יכולת ליזום ולהשתלב חברתית', 'חרדה חברתית או ביישנות', 'הבנה וניתוח של מצבים חברתיים', 'תסכול וקושי בניהול קונפליקטים', 'גמישות מחשבתית וחשיבה חיובית'];
+  const DO = [['puzzle', 'משחקים ופעילויות'], ['drama', 'משחקי תפקידים וסימולציות'], ['messages-square', 'שיח במרחב בטוח'], ['heart-handshake', 'הדרכת הורים']];
+  const INFO = [['school', 'כיתות א׳–ו׳', 'שלוש קבוצות גיל'], ['users', 'עד 8 ילדים', 'בכל קבוצה'], ['calendar-days', 'ימי רביעי', 'אחר הצהריים'], ['map-pin', 'קריית אתא', 'שלום עליכם 5']];
+  const BUB = ['#FDE3D8', '#E2F1FB', '#E8F4E0', '#FFF6C4', '#FDE3D8', '#E2F1FB'];
+  const T_FOR = (i) => 25.65 + i * 0.3125, T_DO = (i) => 29.85 + i * 0.3125, T_INFO = (i) => 33.0 + i * 0.3125;
   const CLOCK = ['16:41', '16:41', '16:42', '16:42', '16:43', '16:43', '16:44', '16:44', '16:44'];
 
   // ------------------------------------------------------------------ DOM
@@ -65,6 +73,7 @@
     <path class="lstroke" d="${LOGO_PATH}" pathLength="1" fill="none" stroke="#4E4B5D" stroke-width="7.4" stroke-linejoin="round" stroke-linecap="round"/>
     ${LOGO_DOTS.map(([x, y, r, c]) => `<circle class="ld" cx="${x}" cy="${y}" r="${r}" fill="${c}" style="transform-box:fill-box;transform-origin:center"/>`).join('')}</svg>`;
   const ticks = `<svg class="ticks" viewBox="0 0 34 20"><path d="M2,11 L8,17 L19,4 M14,15 L16,17 L27,4" fill="none" stroke="#4A90B8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const mwk = (ws) => ws.map(([w, c]) => `<span class="mask"><span class="wd${c ? ' ' + c : ''}">${w}</span></span>`).join(' ');
   const msgHTML = (m, i) => m.card
     ? `<div class="msg in card" id="m${i}"><div class="pv">
          <div class="pvblob" style="width:220px;height:220px;left:-60px;top:-70px;background:#C0DFAE;opacity:.6"></div>
@@ -93,6 +102,39 @@
     </div></div>
     <div id="ripple"></div><div id="touch"></div>
     <div id="expand"><div class="inner">${logoSVG('exLogo', 300)}<div class="big">קבוצת חברים</div><div class="sub">מרכז דיאלוג</div></div></div>
+    <div id="partB">
+      <div class="scene" id="s1">
+        <div class="bl bl1" style="top:780px">${mwk([['חברות'], ['היא'], ['מיומנות.', 'k']])}</div>
+        <div class="bl bl2" style="top:930px">${mwk([['אפשר'], ['ללמוד'], ['ולתרגל', 'k'], ['אותה.']])}</div>
+      </div>
+      <div class="scene" id="s2">
+        <div class="hd" style="top:520px">${mwk([['למי'], ['זה'], ['מתאים?']])}</div>
+        <div class="bubs">${FOR.map((f, i) => `<div class="bub ${i % 2 ? 'l' : 'r'}" id="for${i}" style="background:${BUB[i]}">${f}</div>`).join('')}</div>
+      </div>
+      <div class="scene" id="s3">
+        <div class="hd" style="top:520px">${mwk([['מה'], ['עושים'], ['בקבוצה?']])}</div>
+        ${DO.map(([icn, txt], i) => `<div class="tile" id="do${i}" style="left:${i % 2 ? 90 : 560}px;top:${680 + Math.floor(i / 2) * 330}px"><div class="ico" style="background:${BUB[i]}">${ic(icn)}</div><div class="tt">${txt}</div></div>`).join('')}
+        <div class="note" id="doNote" style="top:1360px">המנחה בונה לכל ילד תוכנית אישית</div>
+      </div>
+      <div class="scene" id="s4">
+        <div class="hd" style="top:520px">${mwk([['הפרטים']])}</div>
+        ${INFO.map(([icn, a, b], i) => `<div class="tile" id="info${i}" style="left:${i % 2 ? 90 : 560}px;top:${680 + Math.floor(i / 2) * 340}px"><div class="ico" style="background:${BUB[i]}">${ic(icn)}</div><div class="tt">${a}</div><div class="ts">${b}</div></div>`).join('')}
+      </div>
+      <div class="scene" id="s5">
+        <div id="sgPhoto"><img src="@@SIGAL@@" alt=""></div>
+        <div class="sgK" id="sgK">בהנחיית</div>
+        <div class="sgN" id="sgN">סיגל וצלר</div>
+        <div class="sgB" id="sgB1">מטפלת רגשית — פסיכותרפיסטית באמצעות משחק ו-<bdi>LI-CBT</bdi> מדריכת הורים ומנחה קבוצות הורים וילדים.</div>
+        <div class="sgB" id="sgB2">בעלת תואר ראשון ושני (<bdi>M.A</bdi>) בחינוך לגיל הרך.</div>
+      </div>
+      <div class="scene" id="s6">
+        <div class="dK" id="dK" style="top:560px">פתיחה</div>
+        <div class="dD" id="dD" style="top:630px"><bdi>18.11</bdi></div>
+        <div class="chip" id="dR" style="top:960px;background:#C46A5C;color:#fff">הרשמה עד <bdi>11.11</bdi></div>
+        <div class="chip" id="dL" style="top:1130px;background:#E2F1FB;color:#3A3848"><span class="arw">${ic('arrow-up')}</span>הקישור בביו</div>
+        <div class="dW" id="dW" style="top:1300px">או בוואטסאפ <bdi>050-6133093</bdi></div>
+      </div>
+    </div>
     <div id="grain"></div>`;
   const $ = (id) => document.getElementById(id);
   const el = { phone: $('phone'), list: $('list'), view: $('view'), st: $('st'), field: $('field'), send: $('send'), touch: $('touch'), ripple: $('ripple'), expand: $('expand') };
@@ -124,6 +166,7 @@
 
   // ------------------------------------------------------------------ the frame
   function apply(t) {
+    applyB(t);
     // background blobs drift slowly
     [['b1', 0.3, 40], ['b2', 0.25, 30], ['b3', 0.2, 36], ['b4', 0.35, 26]].forEach(([id, f, a], i) => {
       $(id).style.transform = `translate(${f1(a * Math.sin(t * f + i))}px, ${f1(a * Math.cos(t * f * 0.8 + i * 2))}px)`;
@@ -196,13 +239,81 @@
       Object.assign(el.expand.style, { transform: `translate(${f1(x)}px, ${f1(y)}px)`, width: `${f1(w)}px`, height: `${f1(h)}px`, borderRadius: `${f1(34 * (1 - ex))}px` });
       const inner = el.expand.querySelector('.inner');
       const ik = sp(t, EXP0 + 0.5, SPR.pop);
-      inner.style.transform = `scale(${f3(lerp(0.32, 1, ex) * (0.94 + 0.06 * clamp(ik)))})`;
+      const toHead = EZ.io(prog(t, B0, B0 + 0.6)), back = sp(t, END0, { stiffness: 170, damping: 16 });
+      const hs = lerp(1, 0.42, toHead) + (1.04 - 0.42) * back * toHead;
+      const hy = lerp(0, -620, toHead) * (1 - back);
+      inner.style.transform = `translateY(${f1(hy)}px) scale(${f3(lerp(0.32, 1, ex) * (0.94 + 0.06 * clamp(ik)) * hs)})`;
+      // the card colour settles into the paper background for part B
+      const pb = EZ.io(prog(t, B0, B0 + 0.6));
+      el.expand.style.background = `rgba(253,227,216,${f2(1 - pb)})`;
       inner.style.opacity = f2(clamp(ex * 1.5));
       // the logo draws itself again once the card fills the frame
       const lg = $('exLogo');
       lg.querySelector('.lstroke').style.strokeDasharray = '1';
       lg.querySelector('.lstroke').style.strokeDashoffset = f3(1 - EZ.out(prog(t, EXP1 - 0.2, EXP1 + 1.0)));
-      lg.querySelectorAll('.ld').forEach((d, i) => { d.style.transform = `scale(${f3(clamp(sp(t, EXP1 + 0.2 + i * 0.12, SPR.pop), 0, 1.3))})`; });
+      lg.querySelectorAll('.ld').forEach((d, i) => { d.style.transform = `scale(${f3(clamp(sp(t, EXP1 + 0.2 + i * 0.12, SPR.pop), 0, 1.3) * (1 + 0.35 * Math.exp(-(((t - END0 - 0.25 - i * 0.12) / 0.09) ** 2))))})`; });
+    }
+  }
+
+  function applyB(t) {
+    // ---------------- part B
+    const sceneK = (id) => {
+      const [a, b] = SC[id];
+      const on = t > a - 0.05 && t < b;
+      const n = $(id);
+      n.style.display = on ? '' : 'none';
+      if (!on) return null;
+      const out = EZ.io(prog(t, b - 0.3, b));
+      n.style.opacity = f2(1 - out);
+      n.style.transform = `translateY(${f1(-70 * out)}px)`;
+      return n;
+    };
+    const pop = (node, t0, { dy = 50, s0 = 0.7, cfg = SPR.pop, base = '' } = {}) => {
+      const k = sp(t, t0, cfg);
+      node.style.opacity = f2(clamp(k * 2.2));
+      node.style.transform = `${base} translateY(${f1((1 - k) * dy)}px) scale(${f3(s0 + (1 - s0) * k)})`;
+    };
+    const rise = (node, t0, step = 0.11) => node.querySelectorAll('.wd').forEach((w, i) => {
+      const k = sp(t, t0 + i * step, SPR.pop);
+      w.style.transform = `translateY(${f1((1 - k) * 120)}%)`;
+    });
+    $('partB').style.display = t > B0 ? '' : 'none';
+    if (t > B0) {
+      let n;
+      if ((n = sceneK('s1'))) { rise(n.querySelector('.bl1'), 22.95); rise(n.querySelector('.bl2'), 23.9); }
+      if ((n = sceneK('s2'))) {
+        rise(n.querySelector('.hd'), 25.3);
+        FOR.forEach((_, i) => { const b = $(`for${i}`); b.style.transformOrigin = i % 2 ? '0% 100%' : '100% 100%'; pop(b, T_FOR(i), { dy: 30, s0: 0.6 }); });
+      }
+      if ((n = sceneK('s3'))) {
+        rise(n.querySelector('.hd'), 29.5);
+        DO.forEach((_, i) => {
+          const k = sp(t, T_DO(i), { stiffness: 220, damping: 16 });
+          const c = $(`do${i}`);
+          c.style.opacity = f2(clamp(k * 2.5));
+          c.style.transform = `perspective(1200px) rotateY(${f1((1 - k) * 90)}deg) scale(${f3(0.85 + 0.15 * k)})`;
+        });
+        pop($('doNote'), 31.3, { dy: 30, s0: 0.95 });
+      }
+      if ((n = sceneK('s4'))) {
+        rise(n.querySelector('.hd'), 32.7);
+        INFO.forEach((_, i) => pop($(`info${i}`), T_INFO(i), { dy: 70, s0: 0.75 }));
+      }
+      if ((n = sceneK('s5'))) {
+        pop($('sgPhoto'), 35.85, { dy: 40, s0: 0.55, base: 'translateX(-50%)' });
+        pop($('sgK'), 36.25, { dy: 30, s0: 0.95 });
+        pop($('sgN'), 36.45, { dy: 40, s0: 0.9 });
+        pop($('sgB1'), 36.9, { dy: 30, s0: 0.97, cfg: SPR.ui });
+        pop($('sgB2'), 37.4, { dy: 30, s0: 0.97, cfg: SPR.ui });
+      }
+      if ((n = sceneK('s6'))) {
+        pop($('dK'), 39.85, { dy: 30, s0: 0.95 });
+        pop($('dD'), 40.15, { dy: 80, s0: 0.5, cfg: { stiffness: 300, damping: 15 } });
+        pop($('dR'), 40.6, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
+        pop($('dL'), 40.95, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
+        pop($('dW'), 41.25, { dy: 30, s0: 0.95 });
+        $('dL').querySelector('.arw').style.transform = `translateY(${f1(-10 * Math.abs(Math.sin(t * TAU * 0.8)))}px)`;
+      }
     }
   }
 
@@ -223,6 +334,17 @@
     add(TAP, 'tap', 'tok', { pitch: 'D5', gain: 0.14 });
     add(EXP0 + 0.05, 'card leaves the phone', 'whoosh', { len: 0.9, from: 300, to: 2200, gain: 0.14 });
     LOGO_DOTS.forEach((_, i) => add(EXP1 + 0.2 + i * 0.12, `logo dot ${i + 1}`, 'pop', { pitch: ['D5', 'F#5', 'A5', 'B5', 'D6'][i], gain: 0.08 }));
+    add(B0, 'drop', 'impact', { gain: 0.16 });
+    add(22.95, 'line 1', 'blip', { pitch: 'A5', gain: 0.07 });
+    add(23.9, 'line 2', 'blip', { pitch: 'D6', gain: 0.07 });
+    FOR.forEach((_, i) => add(T_FOR(i), `for ${i + 1}`, 'pop', { pitch: ['D5', 'E5', 'F#5', 'A5', 'B5', 'D6'][i], gain: 0.1 }));
+    DO.forEach((_, i) => add(T_DO(i), `do ${i + 1}`, 'click', { gain: 0.1 }));
+    INFO.forEach((_, i) => add(T_INFO(i), `info ${i + 1}`, 'pop', { pitch: ['F#5', 'A5', 'B5', 'D6'][i], gain: 0.1 }));
+    add(35.85, 'photo', 'pop', { pitch: 'D5', gain: 0.14 });
+    add(40.15, 'date', 'thud', { pitch: 140, to: 60, gain: 0.2 });
+    add(40.6, 'registration', 'pop', { pitch: 'F#5', gain: 0.12 });
+    add(40.95, 'link in bio', 'bell', { pitch: 'A6', gain: 0.12 });
+    add(END0, 'to the logo', 'whoosh', { len: 0.5, from: 500, to: 1800, gain: 0.08 });
     return H.sort((a, b) => a[0] - b[0]);
   }
 
