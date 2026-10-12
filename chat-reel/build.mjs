@@ -11,7 +11,7 @@ let css = rd('src/film.css')
   .replace('@@FONT_HE@@', b64('fonts/varela-he.woff2', 'font/woff2'))
   .replace('@@FONT_LA@@', b64('fonts/varela-la.woff2', 'font/woff2'))
 ;
-const js = rd('src/film.js').replace('@@SIGAL@@', b64('assets/sigal.jpg', 'image/jpeg')).replace('@@GRAIN@@', b64('assets/grain.png', 'image/png'));
+const js = rd('src/film.js').replace('@@SIGAL@@', b64('assets/sigal.jpg', 'image/jpeg')).replace('@@GRAIN@@', b64('assets/grain.png', 'image/png')).replace('@@VARIANT@@', process.env.VARIANT || 'ig');
 const beats = JSON.parse(rd('beats.json'));
 const grid = { period: beats.period, offset: beats.offset, bpm: beats.bpm };
 const ICON_DIR = path.join(ROOT, 'node_modules/lucide-static/icons');

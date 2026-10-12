@@ -9,6 +9,7 @@
   const RENDER = PARAMS.get('render') === '1';
   const PREVIEW = PARAMS.get('preview') === '1' || window.AUTOPLAY === true;
   const DURATION = 52.5;
+  const VARIANT = '@@VARIANT@@';   // 'ig' (link in bio) or 'fb' (the link itself on screen)
   const SW = 1080, SH = 1920;
 
   // ------------------------------------------------------------------ math
@@ -131,7 +132,9 @@
         <div class="dK" id="dK" style="top:560px">פתיחה</div>
         <div class="dD" id="dD" style="top:630px"><bdi>18.11</bdi></div>
         <div class="chip" id="dR" style="top:960px;background:#C46A5C;color:#fff">הרשמה עד <bdi>11.11</bdi></div>
-        <div class="chip" id="dL" style="top:1130px;background:#E2F1FB;color:#3A3848"><span class="arw">${ic('arrow-up')}</span>הקישור בביו</div>
+        ${VARIANT === 'fb'
+          ? `<div class="chip" id="dL" style="top:1130px;background:#E2F1FB;color:#3A3848;font-size:46px;direction:ltr"><span class="arw" style="font-size:44px">${ic('link')}</span>merkazdialog.com/social-skills</div>`
+          : `<div class="chip" id="dL" style="top:1130px;background:#E2F1FB;color:#3A3848"><span class="arw">${ic('arrow-up')}</span>הקישור בביו</div>`}
         <div class="dW" id="dW" style="top:1300px">או בוואטסאפ <bdi>050-6133093</bdi></div>
       </div>
     </div>
@@ -312,7 +315,7 @@
         pop($('dR'), 47.6, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
         pop($('dL'), 48.1, { dy: 60, s0: 0.7, base: 'translateX(50%)' });
         pop($('dW'), 48.55, { dy: 30, s0: 0.95 });
-        $('dL').querySelector('.arw').style.transform = `translateY(${f1(-10 * Math.abs(Math.sin(t * TAU * 0.8)))}px)`;
+        if (VARIANT !== 'fb') $('dL').querySelector('.arw').style.transform = `translateY(${f1(-10 * Math.abs(Math.sin(t * TAU * 0.8)))}px)`;
       }
     }
   }
