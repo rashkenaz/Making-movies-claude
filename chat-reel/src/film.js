@@ -109,7 +109,7 @@
         <div class="bl bl2" style="top:930px">${mwk([['אפשר'], ['ללמוד'], ['ולתרגל', 'k'], ['אותה.']])}</div>
       </div>
       <div class="scene" id="s2">
-        <div class="hd" style="top:520px">${mwk([['למי'], ['זה'], ['מתאים?']])}</div>
+        <div class="hd" style="top:520px">${mwk([['על'], ['מה'], ['עובדים'], ['בקבוצה?']])}</div>
         <div class="bubs">${FOR.map((f, i) => `<div class="bub ${i % 2 ? 'l' : 'r'}" id="for${i}" style="background:${BUB[i]}">${f}</div>`).join('')}</div>
       </div>
       <div class="scene" id="s3">
