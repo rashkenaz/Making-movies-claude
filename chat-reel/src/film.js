@@ -9,7 +9,8 @@
   const RENDER = PARAMS.get('render') === '1';
   const PREVIEW = PARAMS.get('preview') === '1' || window.AUTOPLAY === true;
   const DURATION = 52.5;
-  const VARIANT = '@@VARIANT@@';   // 'ig' (link in bio) or 'fb' (the link itself on screen)
+  const VARIANT = '@@VARIANT@@';
+  const CTA = VARIANT === 'fb';   // a fixed contact strip at the bottom for the whole video (feeds cut short reels)   // 'ig' (link in bio) or 'fb' (the link itself on screen)
   const SW = 1080, SH = 1920;
 
   // ------------------------------------------------------------------ math
@@ -102,6 +103,7 @@
       <div id="inputbar"><div id="field"></div><div id="send"><span style="display:grid;transform:scaleX(-1)">${ic('send-horizontal')}</span></div></div>
     </div></div>
     <div id="ripple"></div><div id="touch"></div>
+    ${CTA ? `<div id="cta"><div class="l1">להרשמה: <bdi>merkazdialog.com/social-skills</bdi></div><div class="l2">או בוואטסאפ <bdi>050-6133093</bdi></div></div>` : ''}
     <div id="expand"><div class="inner">${logoSVG('exLogo', 300)}<div class="big">קבוצת חברים</div><div class="sub">מרכז דיאלוג</div></div></div>
     <div id="partB">
       <div class="scene" id="s1">
@@ -159,17 +161,25 @@
   };
 
   // phone-space to stage-space for the card (the phone is not transformed while the card is tapped)
+  const PS = CTA ? 0.89 : 1;
   function cardRect(t) {
     const card = msgEls[MSGS.length - 1];
     const ph = el.phone, sc = $('screen');
     const x = ph.offsetLeft + sc.offsetLeft + el.view.offsetLeft + el.list.offsetLeft + card.offsetLeft;
     const y = ph.offsetTop + sc.offsetTop + el.view.offsetTop + card.offsetTop - scrollAt(t);
-    return { x, y, w: card.offsetWidth, h: card.offsetHeight };
+    // the phone is scaled by PS about its top centre (540, 250) to leave room for the contact strip
+    return { x: 540 + (x - 540) * PS, y: 250 + (y - 250) * PS, w: card.offsetWidth * PS, h: card.offsetHeight * PS };
   }
 
   // ------------------------------------------------------------------ the frame
   function apply(t) {
     applyB(t);
+    if (CTA) {
+      const k = sp(t, 0.9, SPR.pop);
+      const c = $('cta');
+      c.style.opacity = f2(clamp(k * 2));
+      c.style.transform = `translateY(${f1((1 - k) * 60)}px) scale(${f3(0.9 + 0.1 * k)})`;
+    }
     // background blobs drift slowly
     [['b1', 0.3, 40], ['b2', 0.25, 30], ['b3', 0.2, 36], ['b4', 0.35, 26]].forEach(([id, f, a], i) => {
       $(id).style.transform = `translate(${f1(a * Math.sin(t * f + i))}px, ${f1(a * Math.cos(t * f * 0.8 + i * 2))}px)`;
@@ -178,7 +188,8 @@
     // the phone rises in, then gives way to the card
     const pin = sp(t, 0, SPR.phone);
     const away = EZ.io(prog(t, EXP0, EXP1));
-    el.phone.style.transform = `translateY(${f1((1 - pin) * 700 + away * 60)}px) scale(${f3(0.96 + 0.04 * clamp(pin) - 0.08 * away)})`;
+    el.phone.style.transformOrigin = '50% 0%';
+    el.phone.style.transform = `translateY(${f1((1 - pin) * 700 + away * 60)}px) scale(${f3(PS * (0.96 + 0.04 * clamp(pin) - 0.08 * away))})`;
     el.phone.style.opacity = f2(clamp(pin * 2) * (1 - prog(t, EXP1 - 0.3, EXP1)));
 
     // messages pop in from their corner (spring), the list scrolls up under them
