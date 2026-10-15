@@ -5,3 +5,7 @@ dialog-trainings/audio/*.wav
 *.log
 social-skills-reel/index.html
 social-skills-reel/audio/*.wav
+recipe-reel/build/
+recipe-reel/assets/gen.mp4
+recipe-reel/audio/*.wav
+recipe-reel/end/index.html
