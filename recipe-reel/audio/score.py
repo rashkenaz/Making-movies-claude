@@ -113,21 +113,19 @@ for i in range(18):
         perc.add(woodblock(), b0 + 1.5, 0.05, pan=-0.3)
 for base in (16, 48):
     for off, nt in HOOK:
-        mel.add(glock(nt), base + off, 0.12, pan=0.2)
-for j, nt in enumerate(["D5", "E5", "F#5", "A5", "B5", "D6", "E6", "F#6"]):
-    mel.add(glock(nt, 0.9), 51 + j * 0.25, 0.06 + 0.01 * j, pan=-0.4 + 0.1 * j)   # into the mixing
+        mel.add(glock(nt), base + off, 0.07, pan=0.2)
 # 46 s = beat 73.6: the end card. A lift, then the hook once more and D rings out
 for off, nt in HOOK[:6]:
-    mel.add(glock(nt), 74 + off, 0.13, pan=0.2)
+    mel.add(glock(nt), 74 + off, 0.08, pan=0.2)
 strum.add(uke("D", True, 3.0, 0.5), 84, 0.6)
 bass.add(pizz("D2", 2.5), 84, 0.5)
 pad.add(pad_chord(["D3", "A3", "D4", "F#4"], 2.4, (1600, 600), attack=0.03, release=1.2, voices=4, detune=0.07), 84, 0.14)
-mel.add(glock("D6", 2.0), 84, 0.16)
+mel.add(glock("D6", 2.0), 84, 0.09)
 
 from dsp import sidechain
 duck = sidechain(kicks, strum.x.shape[1], 0.15, 0.12)
 N = strum.n
-mix = reverb(strum.x, 0.25) * duck + reverb(mel.x, 0.38) + bass.x * 0.9 * duck + perc.x + drums.x * 0.8 + reverb(pad.x, 0.35)
+mix = reverb(strum.x, 0.25) * duck + reverb(mel.x, 0.25) + bass.x * 0.9 * duck + perc.x + drums.x * 0.8 + reverb(pad.x, 0.35)
 mix = mix[:, :N]
 fade = int(1.0 * SR)
 mix[:, -fade:] *= np.linspace(1, 0, fade) ** 2

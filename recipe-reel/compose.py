@@ -28,6 +28,6 @@ open('build/cat.txt', 'w').write("file 'main.mp4'\nfile 'end.mp4'\n")
 subprocess.run(['ffmpeg', '-v', 'error', '-y', '-f', 'concat', '-safe', '0', '-i', 'build/cat.txt', '-c', 'copy', 'build/v.mp4'], check=True)
 # audio: music bed + the generated clip's own pouring/whisking sounds, quietly underneath
 subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', 'build/v.mp4', '-i', 'audio/music.wav', '-i', 'assets/gen.mp4', '-filter_complex',
-                '[1:a]atrim=0:55,afade=t=out:st=54:d=1[m];[2:a]volume=0.55,apad[f];[m][f]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-14:TP=-1.5[a]',
+                '[1:a]atrim=0:55,afade=t=out:st=54:d=1[m];[2:a]volume=0.12,lowpass=f=6000,apad[f];[m][f]amix=inputs=2:normalize=0:duration=first,loudnorm=I=-14:TP=-1.5[a]',
                 '-map', '0:v', '-map', '[a]', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '../out/recipe-reel/מתכון-לחברות.mp4'], check=True)
 print('done')
