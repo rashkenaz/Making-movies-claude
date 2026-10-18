@@ -18,8 +18,8 @@ export const OV = [
   ['mix2', `<div class="pill">מוסיפים משחקי תפקידים</div>`, 290],
   ['mix3', `<div class="pill">מתבלים בשיח במרחב בטוח</div>`, 290],
   ['mix4', `<div class="pill">ומגישים עם הדרכת הורים</div>`, 290],
-  ['cook1', `<div class="pill">8 עוגיות · עד 8 ילדים בקבוצה</div>`, 290],
-  ['cook2', `<div class="plate"><div class="big" style="font-size:84px">זמן הכנה: שנה.</div><div class="sub" style="font-size:58px">מפגש בכל יום רביעי.</div></div>`, 270],
+  ['cook1', `<div class="pill">פירגון על תוצאות</div>`, 290],
+  ['cook2', `<div class="plate"><div class="big" style="font-size:84px">זמן הכנה: תלוי בכם.</div></div>`, 270],
   ['cta', `<div class="cta"><div class="l1">להרשמה: <bdi>merkazdialog.com/social-skills</bdi></div><div class="l2">או בוואטסאפ <bdi>050-6133093</bdi></div></div>`, 1580],
 ];
 const css = `
