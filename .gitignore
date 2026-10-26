@@ -9,3 +9,5 @@ recipe-reel/build/
 recipe-reel/assets/gen.mp4
 recipe-reel/audio/*.wav
 recipe-reel/end/index.html
+checklist-reel/audio/*.wav
+checklist-reel/index.html
